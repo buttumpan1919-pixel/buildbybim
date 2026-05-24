@@ -1,0 +1,42 @@
+# Buildbybim.space — robots policy
+# Allow indexing of public marketing pages; block workspace/admin/preview routes.
+
+User-agent: *
+Allow: /
+Allow: /apps
+Allow: /tools
+Allow: /prompts
+Allow: /workflows
+Allow: /roadmap
+Allow: /pricing
+
+# Workspace shell routes (require auth — not useful for search results)
+Disallow: /hub
+Disallow: /workspace
+Disallow: /admin
+Disallow: /projects
+Disallow: /cashflow
+Disallow: /procurement
+Disallow: /project-control
+Disallow: /cost-codes
+Disallow: /suppliers
+Disallow: /approvals
+Disallow: /evidence
+Disallow: /defect
+Disallow: /builddocs
+Disallow: /boq-data
+Disallow: /construction-planner
+Disallow: /design-studio
+Disallow: /library
+Disallow: /social-feed
+Disallow: /employees
+Disallow: /agent-chat
+
+# Internal preview pages — not for public discovery
+Disallow: /developer
+Disallow: /account
+Disallow: /support-plans
+Disallow: /mockup
+Disallow: /style-preview
+
+Sitemap: https://buildbybim.space/sitemap.xml

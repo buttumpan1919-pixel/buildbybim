@@ -1,80 +1,111 @@
 # Buildbybim.space
 
-## โครงหลายแอป
+แพลตฟอร์ม workspace สำหรับผู้รับเหมาก่อสร้างไทย — ทำใบเสนอราคา, จัดซื้อ, คุมต้นทุนโครงการ, รายงานหน้างาน และเอกสารทั้งหมดในที่เดียว
 
-โปรเจกต์นี้มี `Work Hub` เป็น shell หลัก และเก็บรายการแอปไว้ที่ `src/apps.ts`
+**Status**: v0.4.28 · 580/580 tests pass · พร้อม deploy
+**Live**: (จะมี URL หลัง Netlify deploy)
 
-- `hub` คือหน้าเลือกเครื่องมือรวม
-- `builddocs` คือแอปเอกสารเดิมที่ใช้งานได้แล้ว
-- `boqData`, `designStudio`, `library` เป็น prototype app card สำหรับ BOQ database, Render Prompt Studio และคลังข้อมูล
-- `cashflow`, `clientOps` เป็น slot สำหรับพัฒนาเครื่องมือแยกต่อไป
-- `debtPlanner` ยังเป็น placeholder เดิมใน code แต่ไม่ใช่ scope ของเว็บแอปนี้ตอนนี้
+---
 
-เวลาเพิ่มแอปใหม่ ให้เพิ่ม manifest ใน `src/apps.ts` แล้วสร้าง component/state/storage ของแอปนั้นแยกจาก BuildDocs เพื่อให้พัฒนาไปพร้อมกันได้โดยไม่ชนกัน
+## ทำอะไรได้บ้าง
 
-เว็บแอปเอกสารสำหรับผู้รับเหมา ใช้ทำใบเสนอราคา ใบแจ้งหนี้ ใบเสร็จรับเงิน และร่างสัญญารับเหมาก่อสร้าง
+### ERP loop ครบวงจร (Sprint 0-6)
+```
+สร้างโครงการ → ตั้งงบประมาณ + cost code → ขอซื้อ (PR) →
+เทียบราคา supplier (RFQ) → เลือกผู้ขาย → บันทึก cashflow จริง →
+Dashboard 7 KPIs (budget vs actual real-time) → รายงาน Excel
+```
 
-## ใช้งานในเครื่อง
+### Workspace 12 apps
+| App | ใช้ทำอะไร |
+|---|---|
+| Hub | หน้ารวมเข้าทุก app + checklist 4 ขั้นตอน first-run |
+| Projects | สร้าง/แก้โครงการ + ตั้งงบ + RBAC ระดับโครงการ |
+| Cost Codes | 100 รายการมาตรฐาน (โครงสร้าง/สถาปัตย์/งานระบบ) + import CSV จาก Builk |
+| Suppliers | คลังผู้ขาย + ประวัติเสนอราคา |
+| Procurement | PR + RFQ multi-supplier + approval workflow |
+| Cashflow | บันทึกเข้า/ออก + ผูกโครงการ/cost code + รายเดือน |
+| Project Control | Dashboard + alert เกินงบ + เลย deadline + 5 รายงาน Excel |
+| Approvals | Approval Center workflow รวม + audit log |
+| Evidence/Defects | รายงานหน้างาน + ถ่ายรูปจากมือถือ + Plan Pin board 360 |
+| Construction Planner | Gantt + BOQ จาก Excel + sync เข้า baseline |
+| BuildDocs | ใบเสนอราคา/ใบแจ้งหนี้/สัญญา/ใบเสร็จ พิมพ์/PDF |
+| Social Feed | Facebook-style activity feed สำหรับทีม |
+
+### Mobile-ready (Sprint 10A-B)
+- **PWA install** — Add to home screen ทั้ง Android + iOS Safari 16.4+
+- **Camera capture** หน้างาน — กล้องหลังเปิดทันที, upload ขึ้น Supabase Storage
+- **Offline shell** — service worker cache app shell, ใช้งานออฟไลน์ได้
+- **2-way sync** — มือถือไซต์ + laptop ออฟฟิศข้อมูลตรงกัน (last-write-wins)
+
+---
+
+## Deploy ขึ้น web ใน 45 นาที ($0)
+
+ดู [`docs/DEPLOY.md`](docs/DEPLOY.md) — guide click-by-click ทุก step:
+
+```
+1. GitHub repo (private)         · 10 นาที
+2. Supabase migrations           · 10 นาที
+3. Netlify connect + deploy      · 10 นาที
+4. Verify PWA + camera flow      ·  5 นาที
+```
+
+ทุก service ใช้ free tier — ไม่มีค่าใช้จ่ายตอน alpha
+
+---
+
+## Tech stack
+
+```
+Frontend:  Vite + React 19 + TypeScript 5 + IBM Plex Sans Thai
+State:     pure TS domain modules + StorageAdapter pattern
+Storage:   localStorage (offline-first) → Supabase (multi-device sync)
+Auth:      Supabase Auth (email + magic link)
+Tests:     Vitest 580 tests
+Deploy:    Netlify (static + SPA redirect) + Supabase (Postgres + Storage)
+```
+
+**Architecture**: pure TS domain → StorageAdapter → localStorage / Supabase. ทุก app testable แบบ unit, RN-portable (React Native ในอนาคต)
+
+---
+
+## Dev locally
 
 ```bash
 npm install
-npm run dev
+npm run dev        # http://127.0.0.1:5173/
+npm test           # vitest in watch mode
+npm test -- --run  # one-shot run
+npm run build      # production bundle to dist/
+npm run preview    # serve dist/ locally for QA
 ```
 
-เปิด `http://127.0.0.1:5173/`
+ไฟล์ env: copy `.env.example` → `.env`, ใส่ค่า Supabase project URL + anon key (ดู [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md))
 
-## ฟีเจอร์ใน MVP
+---
 
-- แก้ข้อมูลลูกค้า โครงการ เลขเอกสาร วันที่ และหมายเหตุ
-- เพิ่ม/ลบ/แก้รายการงาน จำนวน หน่วย ราคา
-- คำนวณ VAT 7% และหัก ณ ที่จ่าย 3%
-- จัดงวดชำระเงิน
-- เลือกงวดงานเพื่อออกใบวางบิล/ใบแจ้งหนี้เฉพาะงวด
-- ใช้หน้าสัญญาเพื่อดูงวดงานและสร้างใบวางบิลจาก milestone
-- หน้าเมนูด้านซ้ายเชื่อมกับข้อมูลจริง: เอกสาร, สัญญา, Google Sheet, ลูกค้า, โครงการ, ต้นทุน, ตั้งค่า
-- สร้างร่างสัญญารับเหมา 4 รูปแบบ
-- นำเข้ารายการงานจาก Google Sheet ที่ export/publish เป็น CSV
-- บันทึกเอกสารหลายฉบับอัตโนมัติใน `localStorage`
-- สร้างเอกสารใหม่ คัดลอกเอกสารเดิม และเปิดเอกสารที่บันทึกไว้จากแถบซ้าย
-- export/import backup เป็นไฟล์ `.json` สำหรับย้ายเครื่องหรือสำรองข้อมูล
-- พิมพ์หรือบันทึกเป็น PDF ผ่าน browser print dialog
-- แชร์ข้อความสรุปผ่าน Web Share หรือคัดลอกข้อความสำรอง
+## เอกสาร PRD/Architecture
 
-## Google Sheet format
+อยู่ใน `docs/` — สำคัญที่สุด:
+- [`docs/PRD.md`](docs/PRD.md) — master spec รวม app-by-app
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — module/data layer
+- [`docs/DEPLOY.md`](docs/DEPLOY.md) — คู่มือเปิด production
+- [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md) — schema + RLS + Storage
+- [`docs/TASKS.md`](docs/TASKS.md) — done log + roadmap
 
-Sheet ต้องมี header อย่างน้อย:
+---
 
-```csv
-รายการ,หน่วย,จำนวน,ราคา/หน่วย
-งานปูกระเบื้องพื้น,ตร.ม.,48,520
-```
+## ติดต่อ alpha tester
 
-รองรับ header อังกฤษบางคำ เช่น `name`, `unit`, `qty`, `price`
+อยากลองใช้กับโครงการจริง? ส่งอีเมล narongsak.bimtts2004@gmail.com แจ้งว่า:
+- ทำงานอะไร (ผู้รับเหมา / สถาปนิก / project manager)
+- โครงการขนาดไหน (ส่งให้ดูได้ฟรีระหว่าง alpha)
 
-## Build production
+ฟีดแบ็คแรกๆ เรารับเข้า roadmap ก่อน ใช้ฟรีตลอด alpha period
 
-```bash
-npm run build
-npm run preview
-```
+---
 
-## Deploy ไป Netlify
+## License
 
-```bash
-npm run deploy:netlify
-```
-
-ถ้าจะขึ้น production:
-
-```bash
-npm run deploy:netlify:prod
-```
-
-ต้อง login Netlify CLI ก่อนด้วย `npx netlify login`
-
-## ข้อจำกัดก่อนใช้เชิงพาณิชย์
-
-- Google Sheet ส่วนตัวที่ต้อง login ยังไม่รองรับ ต้องเพิ่ม OAuth/backend ภายหลัง
-- PDF ใช้ browser print dialog ยังไม่ใช่ PDF engine ฝั่ง server
-- ร่างสัญญาควรให้ผู้รู้กฎหมายตรวจรายละเอียดก่อนใช้ลงนามจริง
-- ยังไม่มีระบบผู้ใช้หลายคนหรือ sync ฐานข้อมูลกลาง
+Proprietary · all rights reserved. ติดต่อก่อนใช้ในเชิงพาณิชย์
