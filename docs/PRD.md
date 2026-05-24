@@ -1,12 +1,15 @@
 # Build By BIM Platform - Master PRD
 
-Updated: 2026-05-24 (Implementation Snapshot v0.4.25)
+Updated: 2026-05-25 (Implementation Snapshot v0.4.40 — PRODUCTION LIVE)
 Status: Living product document
 Primary source of truth: `docs/PRD.md`
 
 ## 0. Current Implementation Snapshot (ใช้สำหรับ continue ใน Codex)
 
-**Last sync**: 2026-05-24 · **Branch**: main · **Test**: 536/536 pass · **Build**: pass (`npm run build`, Vite chunk warning only)
+**🚀 Production**: https://buildbybimspace.netlify.app · GitHub: `buttumpan1919-pixel/buildbybim` · Supabase project: `mnanqmmgniaqpvkzupmn` · Auto-deploy on push to `main`
+**Last sync**: 2026-05-25 · **Branch**: main · **Test**: 597/597 pass · **Build**: pass (`npm run build`, Vite chunk warning only)
+**Auth working in production**: Google OAuth + magic link + guest mode (LINE deferred per `docs/LINE_MESSAGING_PRD.md`)
+**Deploy guides**: `docs/DEPLOY.md` (Netlify setup) · `docs/AUTH_OAUTH_SETUP.md` (Google/LINE/Supabase URL config) · `docs/SUPABASE_SETUP.md` (schema + RLS)
 
 ### 0.1 Platform skeleton — DONE
 Public website + workspace shell + multi-language + funnel + access enforcement ครบทุก step:
@@ -30,13 +33,13 @@ Facebook content → / landing → /apps catalog → workspace (lazy)
 | Procurement | `costCodes` | `/cost-codes` | prototype | `workspace/apps/cost-codes/CostCodesPanel.tsx` + `costCodes.ts` + `costCodes.seed.ts` |
 | Procurement | `suppliers` | `/suppliers` | prototype | `workspace/apps/suppliers/SuppliersPanel.tsx` + `suppliers.ts` |
 | Procurement | `procurement` | `/procurement` | prototype | `workspace/apps/procurement/ProcurementPanel.tsx` + `procurement.ts` |
-| Procurement | `projectControl` | `/project-control` | prototype | `workspace/apps/project-control/ProjectControlPanel.tsx` + `projectControl.ts` with Construction Planner baseline rollup and BOQ source drill-down |
+| Procurement | `projectControl` | `/project-control` | prototype | `workspace/apps/project-control/ProjectControlPanel.tsx` + `projectControl.ts` with Construction Planner baseline rollup, BOQ source drill-down, expandable source detail, source-detail CSV export, and pure source CSV row builder tests |
 | Procurement | `approvals` | `/approvals` | prototype | `workspace/apps/approvals/ApprovalCenterPanel.tsx` + `approvals.ts` |
 | Project Work | `evidence` | `/evidence` | prototype | `workspace/apps/evidence/EvidencePanel.tsx` + `evidence.ts` + `docs/EVIDENCE_ASSET_PRD.md` |
 | Project Work | `builddocs` | `/docs` | usable | `App.tsx` BuildDocs (quote/PO/invoice/receipt/contract + document authority panel/stamps) |
 | Project Work | `boqData` | `/boq-data` | active | `App.tsx` BoqDataPanel + `workspace/apps/boq-data/boqDataService.ts` + `boqTaskLinkage.ts` + `boqAllocation.ts` |
 | Project Work | `constructionPlanner` | `/construction-planner` | prototype | `workspace/apps/construction-planner/ConstructionPlannerPanel.tsx` workbook-style sheet preview + `constructionPlannerService.ts` + `constructionPlannerIntegration.ts` sync + built-in seed from `Construction Planning Spreadsheet.xlsx` |
-| Project Work | `defectTracker` | `/defect` | prototype | `App.tsx` DefectTrackerPanel + Site Report tab + EvidenceAsset floor/room/zone/viewpoint metadata + location pin board + `workspace/apps/defects/defectService.ts` + `docs/SITE_REPORT_360_PRD.md` |
+| Project Work | `defectTracker` | `/defect` | prototype | `App.tsx` DefectTrackerPanel + Site Report tab + EvidenceAsset floor/room/zone/viewpoint metadata + location pin board + Plan Pin board Phase 1 + capture sets + same-pin compare + `workspace/apps/defects/defectService.ts` + `workspace/apps/defects/siteReportService.ts` + `docs/SITE_REPORT_360_PRD.md` |
 | Project Work | `employees` | `/employees` | prototype | `App.tsx` EmployeePanel + `workspace/apps/employees/employeeService.ts` |
 | Business | `cashflow` | `/cashflow` | **prototype (v0.1 ready)** | `workspace/apps/cashflow/CashflowPanel.tsx` + `cashflow.ts` + `docs/CASHFLOW_PRD.md` |
 | Business | `clientOps` | `/clients` | planned | (manifest only) |
@@ -44,7 +47,7 @@ Facebook content → / landing → /apps catalog → workspace (lazy)
 | Design (storage) | `library` | `/library` | prototype | `workspace/apps/library/LibraryPanel.tsx` |
 | Agent | `agentChat` | `/agent-chat` | prototype | `workspace/apps/agent-chat/AgentChatPanel.tsx` |
 | Social | `socialFeed` | `/feed` | prototype | `App.tsx` SocialFeedPanel + `workspace/apps/social-feed/socialFeedService.ts` |
-| Platform | `admin` | `/admin` | **prototype (v0.1 ready)** | `AdminPanel.tsx` (5 tabs + Cloud Sync card + Project Access grants/check) |
+| Platform | `admin` | `/admin` | **prototype (v0.1 ready)** | `AdminPanel.tsx` (5 tabs + Cloud Sync card + Project Access grants/member directory/check) |
 | Parked | `debtPlanner` | `/debt` | next | placeholder only, out of scope |
 
 ### 0.3 Public routes (impl ใน `PublicSite.tsx` + route modules)
@@ -65,15 +68,16 @@ Facebook content → / landing → /apps catalog → workspace (lazy)
 - `src/cashflow.recurring.ts` — Recurring cashflow template storage and entry generation
 - `src/approvals.ts` — Generic ApprovalRequest state machine, PR/Cashflow/BuildDocs document sync, and audit bridge
 - `src/evidence.ts` — Evidence asset data layer for receipts, site photos, site 360/files, RFQ quotes, invoices, file proof, links, statuses, summaries, and approval evidence gate policy
-- `src/projectAccess.ts` — Project-scoped RBAC grants and document authority stamps for prepared/submitted/checked/approved/issued document workflows; Admin Project Access manages grants/checks, Projects filters read/write/admin actions, BuildDocs gates authority/print/share/export actions, Approval Center gates approve/reject actions, and Procurement/Cashflow/Project Control scope financial/control data plus write/confirm/approve/award actions before saving source records
+- `src/projectAccess.ts` — Project-scoped RBAC grants, local member directory, selected member persistence, and document authority stamps for prepared/submitted/checked/approved/issued document workflows; Admin Project Access manages grants/members/checks, the workspace topbar switches the selected member from the same directory, Projects filters read/write/admin actions, BuildDocs gates authority/print/share/export actions, Approval Center gates approve/reject actions, and Procurement/Cashflow/Project Control scope financial/control data plus write/confirm/approve/award actions before saving source records
 - `src/membership.ts` — Plans + AccessRules + Overrides + Audit + `evaluateAppAccess()` per MEMBERSHIP_ACCESS_PRD Section 5
 - `src/projects.ts` — Project list/detail data layer, computed project status, seed projects, and storage adapter load/save
-- `src/boqTaskLinkage.ts` — BOQ task↔BOQ item linkage; `/boq-data?tab=task-linkage` accepts `projectId`, `taskId`, `boqItemId`, and `costCode` query context for cross-app drill-down
+- `src/boqTaskLinkage.ts` — BOQ task↔BOQ item linkage; `/boq-data?tab=task-linkage` accepts `projectId`, `taskId`, `boqItemId`, and `costCode` query context for cross-app drill-down and pins the route-target BOQ row in the picker
 - `src/boqAllocation.ts` — BOQ catalog allocation validation
 - `src/storage.ts` — Workspace data (docs/clients/projects/employees/defects)
 - `src/stylePreviewI18n.ts` — TH/EN language preference
 - `src/hubDashboardCopy.ts` — Hub dashboard TH/EN dictionary
 - `src/workspace/apps/defects/defectService.ts` — Defect labels, legacy storage cleanup, file/date formatters, image upload helper, Site Report events, EvidenceAsset bridge helpers, Site Report location metadata tags, and location pin grouping
+- `src/workspace/apps/defects/siteReportService.ts` — Site Report plan, numbered pin, and capture set storage using `site-report.plans.v1`, `site-report.pins.v1`, and `site-report.capture-sets.v1`, with project/plan filters, Location pin binding, coordinate normalization, next-pin numbering, reserved evidence tag helpers, and same-pin compare filters
 - `src/workspace/apps/employees/employeeService.ts` — Employee project options, normalization, site-team derivation, legacy storage cleanup, payroll helpers, and app stats
 - `src/workspace/apps/social-feed/socialFeedService.ts` — Social Feed data layer, storage adapter load/save, normalization, stats, search, and post/comment helpers
 - `src/workspace/apps/boq-data/boqDataService.ts` — BOQ custom catalog storage, row normalization, search text, merge rules, status/filter constants, and CSV parsing
@@ -90,7 +94,7 @@ Facebook content → / landing → /apps catalog → workspace (lazy)
 
 ### 0.6 Quality + testing — DONE
 - Vitest + jsdom + coverage installed (`npm test` / `npm run test:watch` / `npm run test:coverage`)
-- 536 tests pass: storage adapter, membership/audit, project access/document authority/enforcement guards, Admin Project Access route/copy, cashflow + rollup/recurring, approvals, evidence, SupabaseAdapter, sheets, workspace storage, projects, cost codes, suppliers, procurement PR/RFQ, Project Control planner-baseline/source drill-down rollup, social/employee/defect/BOQ services, Construction Planner parser/seed/sync tests, and workspace shell routing/language tests
+- 597 tests pass: storage adapter, membership/audit, project access/member directory/document authority/enforcement guards, Admin Project Access route/copy, cashflow + rollup/recurring, approvals, evidence, SupabaseAdapter, sheets, workspace storage, projects, cost codes, suppliers, procurement PR/RFQ, Project Control planner-baseline/source drill-down/source CSV rollup, social/employee/defect/BOQ services, Construction Planner parser/seed/sync tests, and workspace shell routing/language tests
 - TypeScript build clean
 - Code-split: `main.tsx` uses `React.lazy(() => import("./App"))` — landing visitor ไม่โหลด workspace app bundle before entering `/hub` or app routes
 
@@ -122,8 +126,8 @@ Facebook content → / landing → /apps catalog → workspace (lazy)
 
 ### 0.8 What to build next (priorities ตาม PRD release plan)
 
-1. **Site Report 360 Plan Pin slice** — implement `docs/SITE_REPORT_360_PRD.md` Phase 1: plan image, numbered pins, bind existing Location pins, and keep report/evidence scope.
-2. **Phase D relational mappers** — implement `docs/SUPABASE_SYNC_CONTRACT.md` so high-value keys (projects, cost codes, suppliers, PR/RFQ, cashflow, approvals, evidence, project access, document authority) populate Supabase tables instead of only `kv_store`.
+1. **Site Report 360 comments slice** — implement `docs/SITE_REPORT_360_PRD.md` Phase 3: pin/event comments, replies, attachments, and comment-to-task conversion.
+2. **Phase D relational mappers** — implement `docs/SUPABASE_SYNC_CONTRACT.md` so high-value keys (projects, cost codes, suppliers, PR/RFQ, cashflow, approvals, evidence, project access, document authority, Site Report plans/pins/capture sets) populate Supabase tables instead of only `kv_store`.
 3. **Evidence Asset follow-up** — add relational mapper + Supabase Storage bucket, then add project/app/role dimensions and RFQ quote auto-link helpers to the current evidence gate.
 4. **Phase E realtime + anonymous→email upgrade** — Supabase Realtime subscription + linkIdentity API.
 5. **Phase G payment** — Omise (Thai PromptPay) + Stripe (international) wired to `/support-plans` Activate.
@@ -138,7 +142,7 @@ npm install
 npm run dev                 # http://127.0.0.1:5173
 
 # Test
-npm test                    # 536 tests
+npm test                    # 597 tests
 npm run test:watch
 npm run test:coverage
 
@@ -499,7 +503,7 @@ App catalog, Tools Apps, Prompt Set และ Workflow Apps ต้องใช�
 | Project Work | `projects` | `/projects` | prototype | Project list + detail live in `workspace/apps/projects/ProjectsPanel.tsx` + data layer `src/projects.ts`; PRD: `docs/PROJECT_PRD.md` |
 | Project Work | `builddocs` | `/docs` | usable prototype | เอกสารและสัญญา |
 | Project Work | `boqData` | `/boq-data` | active prototype | BOQ, price database, budget allocation; helpers in `workspace/apps/boq-data/boqDataService.ts` |
-| Project Work | `defectTracker` | `/defect` | prototype | defect, รูปหน้างาน, handover, Site Report tab with EvidenceAsset links, floor/room/zone/viewpoint metadata, location pin board, and Site Report 360 PRD (`docs/SITE_REPORT_360_PRD.md`) |
+| Project Work | `defectTracker` | `/defect` | prototype | defect, รูปหน้างาน, handover, Site Report tab with EvidenceAsset links, floor/room/zone/viewpoint metadata, location pin board, Plan Pin board Phase 1, capture sets, same-pin compare, and Site Report 360 PRD (`docs/SITE_REPORT_360_PRD.md`) |
 | Project Work | `employees` | `/employees` | prototype | พนักงาน ทีม ค่าแรง |
 | Procurement | `costCodes` | `/cost-codes` | prototype | CBS spine — 100 Thai seed codes + tree view + CSV import; PRD: `docs/COST_CODES_PRD.md`; impl `src/costCodes.ts` + `workspace/apps/cost-codes/CostCodesPanel.tsx` |
 | Procurement | `suppliers` | `/suppliers` | prototype | Supplier directory + price history + rating; PRD: `docs/SUPPLIERS_PRD.md`; impl `src/suppliers.ts` + `workspace/apps/suppliers/SuppliersPanel.tsx` |
@@ -834,7 +838,7 @@ PRD ย่อยอยู่ที่ `docs/DESIGN_PLAN_REVIEW_PRD.md`
 ### v0.3 — MOSTLY DONE (foundation), apps pending
 
 - ✅ Cashflow PRD (`docs/CASHFLOW_PRD.md`) and first implementation
-- ✅ Defect Site Report tab + EvidenceAsset bridge + floor/room/zone/viewpoint metadata + location pin board (`docs/BUILK360_SITE_REPORT_ANALYSIS.md`) + Site Report 360 PRD (`docs/SITE_REPORT_360_PRD.md`)
+- ✅ Defect Site Report tab + EvidenceAsset bridge + floor/room/zone/viewpoint metadata + location pin board + Plan Pin board Phase 1 + capture sets + same-pin compare (`docs/BUILK360_SITE_REPORT_ANALYSIS.md`) + Site Report 360 PRD (`docs/SITE_REPORT_360_PRD.md`)
 - ⏳ Design Brief PRD and first implementation
 - ✅ Plan Review / Architect Brain PRD (`docs/DESIGN_PLAN_REVIEW_PRD.md`) — implementation pending
 - ✅ Facebook Content Workflow PRD (`docs/FACEBOOK_CONTENT_WORKFLOW_PRD.md`) — implementation pending

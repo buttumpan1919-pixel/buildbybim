@@ -21,9 +21,9 @@ export type RoadmapFocus = {
 };
 
 export const ROADMAP_LAST_UPDATED = "2026-05-25";
-export const ROADMAP_VERSION_LABEL = "v0.4.28";
-export const ROADMAP_TEST_LABEL = "580/580 tests pass";
-export const ROADMAP_BUILD_LABEL = "build pass · first-run checklist on Hub (4-step guided onboarding for alpha testers)";
+export const ROADMAP_VERSION_LABEL = "v0.4.40";
+export const ROADMAP_TEST_LABEL = "597/597 tests pass";
+export const ROADMAP_BUILD_LABEL = "PRODUCTION LIVE — buildbybimspace.netlify.app · Google OAuth working · Supabase migrations run · LINE Messaging PRD ready";
 
 export const roadmapHero = {
   title: {
@@ -88,6 +88,14 @@ export const roadmapMilestones: RoadmapMilestone[] = [
         en: "Added a language registry, locale/direction metadata, and fallback copy helper so new languages can be added through config and dictionaries."
       },
       {
+        th: "Workspace app modules และ domain copy maps ใช้ WorkspaceLanguage/WorkspaceLanguageCopyMap จาก registry กลาง เพื่อลดจุด hardcode TH/EN ตอนเพิ่มภาษาใหม่",
+        en: "Workspace app modules and domain copy maps now use WorkspaceLanguage/WorkspaceLanguageCopyMap from the central registry, reducing hardcoded TH/EN points before adding more languages."
+      },
+      {
+        th: "เพิ่ม test guard ให้ shared/domain copy maps ต้องมีครบทุกภาษาที่ประกาศใน workspaceLanguages",
+        en: "Added test guards so shared and domain copy maps must cover every configured workspace language."
+      },
+      {
         th: "แยก shell helpers ไปที่ src/workspace/shell/* เพื่อลดการชนกันของหลาย agent",
         en: "Shell helpers split into src/workspace/shell/* to reduce multi-agent collisions"
       },
@@ -132,6 +140,18 @@ export const roadmapMilestones: RoadmapMilestone[] = [
         en: "Project Control: cost-breakdown drill-down into BOQ Data task linkage, including Construction Planner source rows"
       },
       {
+        th: "Project Control: ขยายดู BOQ source ได้ครบทุกแถว และ BOQ Data pin row ต้นทางจาก route context แม้ filter จะซ่อนอยู่",
+        en: "Project Control: expanded all BOQ source rows and BOQ Data now pins the route-target source row even when filters would hide it"
+      },
+      {
+        th: "Project Control: export source-detail CSV สำหรับ audit cost code, task, BOQ item, amount และ source จาก Construction Planner",
+        en: "Project Control: source-detail CSV export for cost code, task, BOQ item, amount, and Construction Planner source audits"
+      },
+      {
+        th: "Project Control: แยก source CSV row builder เป็น pure helper พร้อม unit tests สำหรับ header order, source flattening และ empty rows",
+        en: "Project Control: source CSV row builder moved into a pure helper with unit tests for header order, source flattening, and empty rows"
+      },
+      {
         th: "Construction Planner Preview: เปิดไฟล์ seed จาก Excel เป็น workbook-style sheet preview พร้อม sync local-first เข้า Projects, BOQ Data task linkage/catalog และ Project Control budget baseline",
         en: "Construction Planner Preview: Excel-seeded workbook-style sheet preview with local-first sync into Projects, BOQ Data task linkage/catalog, and the Project Control budget baseline"
       },
@@ -145,6 +165,10 @@ export const roadmapMilestones: RoadmapMilestone[] = [
         en: "Project Access enforcement: Procurement, Cashflow, and Project Control now scope data by grants and guard write/confirm/approve/award actions before saving"
       },
       {
+        th: "Project Access member directory + workspace topbar member selector สำหรับจำลองผู้ใช้หลายระดับ และให้ Projects/Procurement/Cashflow/Project Control/Approval/BuildDocs อ่านผู้ใช้เดียวกัน",
+        en: "Project Access member directory plus workspace topbar member selector so Projects, Procurement, Cashflow, Project Control, Approval Center, and BuildDocs use the same selected member"
+      },
+      {
         th: "Admin Project Access tab สำหรับกำหนด role, supplier scope, permission override และ access check รายโครงการ",
         en: "Admin Project Access tab for project-scoped roles, supplier scope, permission overrides, and access checks"
       },
@@ -156,6 +180,14 @@ export const roadmapMilestones: RoadmapMilestone[] = [
       {
         th: "Site Report 360 PRD พร้อมต่อยอดเป็น plan pin board, capture set, same-pin compare, comment-to-task, File Center และ report templates",
         en: "Site Report 360 PRD is ready for plan pins, capture sets, same-pin compare, comment-to-task, File Center, and report templates"
+      },
+      {
+        th: "Site Report Plan Pin board Phase 1: เพิ่มแปลน, numbered pins, bind Location pins และเลือก plan pin เพื่อ scope report/evidence",
+        en: "Site Report Plan Pin board Phase 1: added plans, numbered pins, Location pin binding, and plan-pin selection that scopes report/evidence"
+      },
+      {
+        th: "Site Report Phase 2: เพิ่ม capture sets, tag evidence ด้วย site-plan/site-pin/site-capture และ same-pin time compare ตามรอบถ่าย",
+        en: "Site Report Phase 2: added capture sets, site-plan/site-pin/site-capture evidence tags, and same-pin time compare by capture round"
       },
       {
         th: "BOQ Data: เพิ่ม Column picker สำหรับซ่อน/แสดงคอลัมน์ตารางตามงานที่ต้องดู พร้อมจำค่าไว้ใน localStorage",
@@ -172,12 +204,20 @@ export const roadmapMilestones: RoadmapMilestone[] = [
       {
         th: "BOQ Data: เพิ่ม publish workflow ด้วยสถานะ Public/Review/Private, เจ้าของข้อมูล, License และ source update log",
         en: "BOQ Data: added a publish workflow with Public/Review/Private status, data owner, license, and source update log"
+      },
+      {
+        th: "BOQ Data: เพิ่ม Public tab แบบ read-only ที่ /boq-data?tab=public สำหรับค้นหา/filter/version และดาวน์โหลด Public CSV โดยไม่มีปุ่มแก้ไข",
+        en: "BOQ Data: added a dedicated read-only Public tab at /boq-data?tab=public with search, filters, version selection, and Public CSV download without edit actions"
+      },
+      {
+        th: "BOQ Data Public: เพิ่ม Download Public XLSX และ Copy link สำหรับแชร์ dataset view ให้ผู้อื่นเปิดดูได้ทันที",
+        en: "BOQ Data Public: added Public XLSX download and Copy link for sharing the dataset view"
       }
     ],
     next: [
       {
-        th: "ทำ Site Report Plan Pin board จาก docs/SITE_REPORT_360_PRD.md Phase 1",
-        en: "Build the Site Report Plan Pin board from docs/SITE_REPORT_360_PRD.md Phase 1"
+        th: "ต่อ Site Report comments และ comment-to-task ตาม docs/SITE_REPORT_360_PRD.md Phase 3",
+        en: "Add Site Report comments and comment-to-task from docs/SITE_REPORT_360_PRD.md Phase 3"
       },
       {
         th: "ทำ relational mapper ให้ข้อมูลหลัก sync ไป Supabase tables แทน kv_store",
@@ -262,7 +302,7 @@ export const roadmapMilestones: RoadmapMilestone[] = [
     next: [
       { th: "Relational mappers สำหรับ projects/cost codes/suppliers/PR/RFQ/cashflow/approvals/evidence", en: "Relational mappers for projects, cost codes, suppliers, PR/RFQ, cashflow, approvals, and evidence" },
       { th: "Backup/export MVP และ file/image storage plan", en: "Backup/export MVP and file/image storage plan" },
-      { th: "Project access and document authority relational mapper", en: "Project access and document authority relational mapper" },
+      { th: "Project access/member/document authority relational mapper", en: "Project access/member/document authority relational mapper" },
       { th: "Payment provider: Omise/PromptPay + Stripe", en: "Payment provider: Omise/PromptPay plus Stripe" }
     ]
   }
@@ -271,26 +311,34 @@ export const roadmapMilestones: RoadmapMilestone[] = [
 export const roadmapCurrentFocus: RoadmapFocus[] = [
   {
     status: "done",
+    label: { th: "Project Access member directory", en: "Project Access member directory" },
+    detail: {
+      th: "เพิ่ม `project-access.members.v1` ให้ Admin Project Access จัดรายชื่อผู้ใช้ได้ และให้ topbar เลือกผู้ใช้งานจาก directory เดียวกันแทนรายการ hardcode",
+      en: "Added `project-access.members.v1` so Admin Project Access can manage members, and the topbar now selects from the same directory instead of a hardcoded list."
+    }
+  },
+  {
+    status: "done",
     label: { th: "Extensible workspace i18n base", en: "Extensible workspace i18n base" },
     detail: {
-      th: "ยังเปิดใช้งานแค่ TH/EN แต่ workspaceLanguage มี registry, locale, direction และ fallback helper แล้ว เพื่อเพิ่มภาษาใหม่ได้โดยขยาย config + copy maps",
-      en: "Only TH/EN are enabled now, but workspaceLanguage now has a registry, locale, direction, and fallback helper so new languages can be added by extending config and copy maps."
+      th: "ยังเปิดใช้งานแค่ TH/EN แต่ workspaceLanguage มี registry, locale, direction, fallback helper และ app/domain copy maps ผูกกับ type กลางแล้ว เพื่อเพิ่มภาษาใหม่ได้จาก config + copy maps",
+      en: "Only TH/EN are enabled now, but workspaceLanguage now has a registry, locale, direction, fallback helper, and app/domain copy maps tied to the central type so new languages can be added through config and copy maps."
     }
   },
   {
     status: "in_progress",
     label: { th: "Construction ERP prototype", en: "Construction ERP prototype" },
     detail: {
-      th: "Construction Planner sync เข้า Projects, BOQ Data และ Project Control แล้ว; Site Report 360 มี PRD สำหรับ Plan Pin board ถัดไป",
-      en: "Project Control can drill down into BOQ task-linkage sources, and Site Report 360 now has a PRD for the next Plan Pin board slice."
+      th: "Construction Planner sync เข้า Projects, BOQ Data และ Project Control แล้ว; Project Control เปิดดู/export source-detail CSV ได้และมี pure helper test ครอบ export contract; Site Report 360 มี Plan Pin board, capture sets และ same-pin compare สำหรับ pin scope report/evidence",
+      en: "Project Control can drill into BOQ task-linkage sources, expand/export source-detail CSV audits with pure helper tests covering the export contract, and Site Report 360 now has a Plan Pin board, capture sets, and same-pin compare for plan-based report/evidence scoping."
     }
   },
   {
     status: "next",
     label: { th: "งานต่อไป", en: "Next work" },
     detail: {
-      th: "Site Report Plan Pin board, relational mapper, Supabase Storage, Evidence follow-up, LINE/AI intake และ payment decision",
-      en: "Site Report Plan Pin board, relational mappers, Supabase Storage, Evidence follow-up, LINE/AI intake, and payment decision."
+      th: "Site Report comments/comment-to-task, relational mapper, Supabase Storage, Evidence follow-up, LINE/AI intake และ payment decision",
+      en: "Site Report comments/comment-to-task, relational mappers, Supabase Storage, Evidence follow-up, LINE/AI intake, and payment decision."
     }
   }
 ];
