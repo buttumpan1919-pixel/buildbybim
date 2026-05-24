@@ -4087,6 +4087,58 @@ button:disabled {
   font-size: var(--text-sm);
 }
 
+/* Auth provider buttons (Google + LINE) on /account sign-in card */
+.auth-google-btn,
+.auth-line-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.auth-google-btn {
+  background: #fff !important;
+  color: #1f2937 !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.auth-google-btn:hover:not(:disabled) {
+  background: #f9fafb !important;
+}
+
+.auth-line-btn {
+  background: #06C755 !important;
+  color: #fff !important;
+  border: 1px solid #06C755 !important;
+}
+
+.auth-line-btn:hover:not(:disabled) {
+  background: #05A847 !important;
+  border-color: #05A847 !important;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: var(--mono);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
 /* First-run guided checklist (Sprint 10C onboarding) — shown on Hub when
    workspace is empty so first-time alpha testers see the 4-step path to value */
 .first-run-checklist {

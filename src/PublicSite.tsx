@@ -29,6 +29,8 @@ import {
   onAuthChange,
   signInAnonymously,
   signInWithEmail,
+  signInWithGoogle,
+  signInWithLine,
   signOut,
   type AuthUser,
   type WorkspaceSummary
@@ -1515,7 +1517,7 @@ function useAuthUser() {
 
 function AccountSignInCard({ language }: { language: Lang }) {
   const [email, setEmail] = useState("");
-  const [busy, setBusy] = useState<"" | "email" | "anonymous">("");
+  const [busy, setBusy] = useState<"" | "email" | "anonymous" | "google" | "line">("");
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"info" | "error">("info");
 
@@ -1538,6 +1540,29 @@ function AccountSignInCard({ language }: { language: Lang }) {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setBusy("google");
+    setMessage("");
+    const result = await signInWithGoogle();
+    if (!result.redirecting) {
+      setBusy("");
+      setMessageTone("error");
+      setMessage(result.error);
+    }
+    // On success, browser is redirecting to Google — no further UI update needed
+  };
+
+  const handleLineSignIn = async () => {
+    setBusy("line");
+    setMessage("");
+    const result = await signInWithLine();
+    if (!result.redirecting) {
+      setBusy("");
+      setMessageTone("error");
+      setMessage(result.error);
+    }
+  };
+
   const continueAsGuest = async () => {
     setBusy("anonymous");
     setMessage("");
@@ -1555,10 +1580,57 @@ function AccountSignInCard({ language }: { language: Lang }) {
         <div className="tier">{language === "en" ? "Sign in" : "เข้าสู่ระบบ"}</div>
         <div className="desc">
           {language === "en"
-            ? "Email magic link — no password. Click the link in your inbox to finish."
-            : "ใช้อีเมล + magic link ไม่ต้องตั้งรหัสผ่าน คลิก link ในอีเมลเพื่อเข้าสู่ระบบ"}
+            ? "Sign in with Google, LINE, or email magic link — no password needed."
+            : "เข้าสู่ระบบด้วย Google, LINE หรือ magic link ไม่ต้องตั้งรหัสผ่าน"}
         </div>
         <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
+          <button
+            className="public-btn public-btn-solid auth-google-btn"
+            onClick={handleGoogleSignIn}
+            disabled={busy !== ""}
+            type="button"
+            aria-label={language === "en" ? "Sign in with Google" : "เข้าสู่ระบบด้วย Google"}
+          >
+            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden focusable="false">
+              <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3l5.7-5.7C34.5 6.5 29.5 4.5 24 4.5 12.7 4.5 3.5 13.7 3.5 25S12.7 45.5 24 45.5 44.5 36.3 44.5 25c0-1.5-.2-3-.4-4.5z" />
+              <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.8 1.2 8 3l5.7-5.7C34.5 6.5 29.5 4.5 24 4.5 16.3 4.5 9.7 8.8 6.3 14.7z" />
+              <path fill="#4CAF50" d="M24 45.5c5.3 0 10.2-2 13.9-5.3l-6.4-5.4c-2 1.4-4.6 2.2-7.5 2.2-5.2 0-9.6-3.3-11.3-8l-6.6 5.1C9.6 41.1 16.2 45.5 24 45.5z" />
+              <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.5l6.4 5.4c-.4.4 6.9-5 6.9-13.9 0-1.5-.2-3-.4-4.5z" />
+            </svg>
+            <span>
+              {busy === "google"
+                ? language === "en"
+                  ? "Redirecting…"
+                  : "กำลังเปลี่ยนหน้า…"
+                : language === "en"
+                  ? "Continue with Google"
+                  : "เข้าสู่ระบบด้วย Google"}
+            </span>
+          </button>
+          <button
+            className="public-btn public-btn-solid auth-line-btn"
+            onClick={handleLineSignIn}
+            disabled={busy !== ""}
+            type="button"
+            aria-label={language === "en" ? "Sign in with LINE" : "เข้าสู่ระบบด้วย LINE"}
+          >
+            <svg width="18" height="18" viewBox="0 0 36 36" aria-hidden focusable="false">
+              <path fill="#fff" d="M18 4C9.7 4 3 9.4 3 16.1c0 6 5.3 11 12.4 12 .5.1 1.1.3 1.3.7.2.4.1.9.1 1.3l-.2 1.3c-.1.4-.3 1.6 1.4.9 1.7-.7 9.1-5.4 12.4-9.2 2.3-2.5 3.4-5.1 3.4-7 0-6.7-6.7-12.1-15-12.1z" />
+              <path fill="#06C755" d="M11.8 13.4c-.2 0-.4.2-.4.4v4.4c0 .2.2.4.4.4h.7c.2 0 .4-.2.4-.4v-4.4c0-.2-.2-.4-.4-.4h-.7zm2.2 0c-.2 0-.4.2-.4.4v4.4c0 .2.2.4.4.4h.7c.2 0 .4-.1.4-.3v-2.7l2.1 2.8c.1.1.2.2.3.2h.7c.2 0 .4-.2.4-.4v-4.4c0-.2-.2-.4-.4-.4h-.7c-.2 0-.4.2-.4.4v2.7l-2.1-2.8c-.1-.2-.2-.3-.3-.3h-.7zm6.4 0c-.2 0-.4.2-.4.4v4.4c0 .2.2.4.4.4h2.8c.2 0 .4-.2.4-.4v-.6c0-.2-.2-.4-.4-.4h-1.7v-3.4c0-.2-.2-.4-.4-.4h-.7zm3.8 0c-.2 0-.4.2-.4.4v4.4c0 .2.2.4.4.4h2.8c.2 0 .4-.2.4-.4v-.6c0-.2-.2-.4-.4-.4h-1.7v-1h1.7c.2 0 .4-.2.4-.4v-.6c0-.2-.2-.4-.4-.4h-1.7v-1h1.7c.2 0 .4-.2.4-.4v-.6c0-.2-.2-.4-.4-.4h-2.8z" />
+            </svg>
+            <span>
+              {busy === "line"
+                ? language === "en"
+                  ? "Redirecting…"
+                  : "กำลังเปลี่ยนหน้า…"
+                : language === "en"
+                  ? "Continue with LINE"
+                  : "เข้าสู่ระบบด้วย LINE"}
+            </span>
+          </button>
+          <div className="auth-divider">
+            <span>{language === "en" ? "or magic link" : "หรือ magic link"}</span>
+          </div>
           <input
             type="email"
             value={email}

@@ -108,6 +108,58 @@ export async function signInWithEmail(
 }
 
 /**
+ * Sign in with Google OAuth. Browser redirects to Google → consent → back to
+ * the redirectTo URL with a session cookie. Requires the Google provider to be
+ * enabled in Supabase Auth → Providers with a valid OAuth client ID/secret.
+ */
+export async function signInWithGoogle(
+  opts: { redirectTo?: string } = {}
+): Promise<{ redirecting: boolean; error: string }> {
+  const client = getSupabaseClient();
+  if (!client) {
+    return { redirecting: false, error: "Supabase ยังไม่ได้เชื่อมต่อ" };
+  }
+  const redirect =
+    opts.redirectTo ??
+    (typeof window !== "undefined" ? `${window.location.origin}/account` : undefined);
+  const { error } = await client.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: redirect }
+  });
+  if (error) {
+    return { redirecting: false, error: error.message };
+  }
+  return { redirecting: true, error: "" };
+}
+
+/**
+ * Sign in with LINE via Supabase Custom OIDC provider. Requires LINE Login
+ * Channel + the OIDC provider registered in Supabase Auth → Providers → Custom
+ * OAuth (provider id "line"). See docs/AUTH_OAUTH_SETUP.md for the setup.
+ */
+export async function signInWithLine(
+  opts: { redirectTo?: string } = {}
+): Promise<{ redirecting: boolean; error: string }> {
+  const client = getSupabaseClient();
+  if (!client) {
+    return { redirecting: false, error: "Supabase ยังไม่ได้เชื่อมต่อ" };
+  }
+  const redirect =
+    opts.redirectTo ??
+    (typeof window !== "undefined" ? `${window.location.origin}/account` : undefined);
+  // Supabase exposes custom OIDC providers via the same signInWithOAuth call.
+  // The provider string must match the slug configured in Supabase dashboard.
+  const { error } = await client.auth.signInWithOAuth({
+    provider: "line" as unknown as "google",
+    options: { redirectTo: redirect }
+  });
+  if (error) {
+    return { redirecting: false, error: error.message };
+  }
+  return { redirecting: true, error: "" };
+}
+
+/**
  * Start an anonymous session — instant, no email needed. The user can later
  * upgrade to a real account via signInWithEmail.
  */
