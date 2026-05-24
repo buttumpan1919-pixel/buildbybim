@@ -10,7 +10,9 @@
 --
 -- WHAT IT KEEPS:
 --   - Supabase auth.* schema (users, sessions — managed by Supabase)
---   - Supabase storage.* schema structure (buckets/objects tables)
+--   - Supabase storage.* schema (buckets/objects — managed by Supabase;
+--     evidence-files bucket if it exists will be upserted by migration 0013
+--     using ON CONFLICT DO UPDATE so re-running is safe)
 --   - All extensions (pgcrypto, uuid-ossp, etc.)
 --
 -- ⚠️ Only use this on a fresh project or one where you accept losing all
@@ -23,15 +25,11 @@ DROP POLICY IF EXISTS "evidence_files_workspace_insert" ON storage.objects;
 DROP POLICY IF EXISTS "evidence_files_workspace_update" ON storage.objects;
 DROP POLICY IF EXISTS "evidence_files_workspace_delete" ON storage.objects;
 
--- 2. Remove the evidence-files bucket (cascades to delete objects + their rows)
-DELETE FROM storage.objects WHERE bucket_id = 'evidence-files';
-DELETE FROM storage.buckets WHERE id = 'evidence-files';
-
--- 3. Nuke the public schema and rebuild it
+-- 2. Nuke the public schema and rebuild it
 DROP SCHEMA IF EXISTS public CASCADE;
 CREATE SCHEMA public;
 
--- 4. Restore default Supabase grants on the new public schema
+-- 3. Restore default Supabase grants on the new public schema
 GRANT USAGE ON SCHEMA public TO postgres, anon, authenticated, service_role;
 GRANT ALL ON SCHEMA public TO postgres, service_role;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO postgres, service_role;
