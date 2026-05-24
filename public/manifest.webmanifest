@@ -1,0 +1,58 @@
+{
+  "name": "Buildbybim.space — Construction workspace",
+  "short_name": "Buildbybim",
+  "description": "Construction project workspace: projects, cost control, PR/RFQ, cashflow, defect site reports, and AI workflow — site-team friendly, mobile-installable.",
+  "start_url": "/hub?utm_source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0A0A09",
+  "background_color": "#FAFAF9",
+  "lang": "th-TH",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/icon-app.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-app.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-apple-touch.svg",
+      "type": "image/svg+xml",
+      "sizes": "180x180",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Workspace Hub",
+      "short_name": "Hub",
+      "description": "Open the workspace hub",
+      "url": "/hub?utm_source=pwa-shortcut",
+      "icons": [{ "src": "/icon-app.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Cashflow",
+      "short_name": "Cashflow",
+      "description": "Record income / expense",
+      "url": "/cashflow?tab=overview&version=0.1&utm_source=pwa-shortcut",
+      "icons": [{ "src": "/icon-app.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Defect Site Report",
+      "short_name": "Site Report",
+      "description": "Capture site defects + 360 evidence",
+      "url": "/defect?tab=site-report&version=0.1&utm_source=pwa-shortcut",
+      "icons": [{ "src": "/icon-app.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

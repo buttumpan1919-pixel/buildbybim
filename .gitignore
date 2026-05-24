@@ -1,0 +1,22 @@
+node_modules/
+dist/
+*.log
+.netlify/
+.env
+.env.local
+.env.*.local
+coverage/
+.vitest-cache/
+
+# Local agent/tooling configs (Claude Code, MCP, agent scratch) — not public app code
+.claude/
+.agents/
+.mcp.json
+tmp/
+artifacts/
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

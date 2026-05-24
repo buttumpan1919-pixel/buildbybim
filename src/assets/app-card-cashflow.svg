@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="40" x2="560" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FEFCE8"/>
+      <stop offset="1" stop-color="#ECFDF5"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="640" rx="54" fill="url(#bg)"/>
+  <rect x="124" y="152" width="392" height="326" rx="32" fill="#FFFFFF" stroke="#0F172A" stroke-opacity=".12" stroke-width="8"/>
+  <path d="M174 398l76-76 58 48 114-134" fill="none" stroke="#0F766E" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M174 430h292" stroke="#0F172A" stroke-opacity=".12" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="438" cy="226" r="46" fill="#22D3EE" fill-opacity=".9"/>
+  <text x="416" y="241" fill="#062B2E" font-family="Arial, sans-serif" font-size="42" font-weight="800">$</text>
+  <text x="84" y="92" fill="#0F172A" fill-opacity=".72" font-family="Arial, sans-serif" font-size="30" font-weight="700">CASHFLOW</text>
+</svg>

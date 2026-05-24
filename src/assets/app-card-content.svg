@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <defs>
+    <linearGradient id="bg" x1="88" y1="52" x2="548" y2="594" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ECFDF5"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="640" rx="54" fill="url(#bg)"/>
+  <rect x="132" y="132" width="376" height="376" rx="32" fill="#FFFFFF" stroke="#0F172A" stroke-opacity=".12" stroke-width="8"/>
+  <rect x="170" y="178" width="214" height="26" rx="13" fill="#10B981" fill-opacity=".85"/>
+  <rect x="170" y="230" width="298" height="18" rx="9" fill="#0F172A" fill-opacity=".16"/>
+  <rect x="170" y="270" width="242" height="18" rx="9" fill="#0F172A" fill-opacity=".12"/>
+  <rect x="170" y="340" width="96" height="96" rx="22" fill="#22D3EE" fill-opacity=".22" stroke="#22D3EE" stroke-width="8"/>
+  <path d="M318 360h112M318 400h76" stroke="#2563EB" stroke-width="12" stroke-linecap="round"/>
+  <path d="M206 388l22 22 42-54" fill="none" stroke="#0F766E" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="84" y="92" fill="#0F172A" fill-opacity=".72" font-family="Arial, sans-serif" font-size="30" font-weight="700">PROMPT / POST</text>
+</svg>

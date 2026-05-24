@@ -1,0 +1,1662 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Buildbybim.space — เครื่องมือทำงานสำหรับก่อสร้าง ออกแบบ และ AI Workflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* monochrome — pure neutral */
+  --white:#FFFFFF;
+  --paper:#FAFAF9;
+  --mist:#F2F2F0;
+  --bg-2:#EAEAE7;
+  --line:#DCDCD9;
+  --line-2:#C9C9C5;
+  --line-strong:#A8A8A4;
+  --ink-5:#8A8A86;
+  --ink-4:#6B6B68;
+  --ink-3:#4A4A47;
+  --ink-2:#2A2A28;
+  --ink:#0A0A09;
+  --black:#000;
+  /* type */
+  --en:"Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --th:"IBM Plex Sans Thai", "Onest", system-ui, sans-serif;
+  --brand:"Prompt", "IBM Plex Sans Thai", "Onest", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  --maxw:1280px;
+  --pad-x:clamp(20px, 4vw, 48px);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--th);color:var(--ink);background:var(--paper);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  font-size:15px;line-height:1.55;
+}
+:lang(en),.en{font-family:var(--en)}
+.mono{font-family:var(--mono)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+img,svg{display:block;max-width:100%}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad-x);padding-right:var(--pad-x)}
+
+/* ──────────────  NAV  ────────────── */
+.nav{
+  position:sticky;top:0;z-index:60;
+  background:rgba(250,250,249,.85);
+  backdrop-filter:saturate(140%) blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{display:flex;align-items:center;gap:28px;height:60px}
+.brand{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--brand);font-weight:700;font-size:17px;letter-spacing:-.01em;
+}
+.brand .mk{
+  width:24px;height:24px;border-radius:4px;
+  background:var(--ink);position:relative;overflow:hidden;flex:none;
+}
+.brand .mk::before,.brand .mk::after{content:"";position:absolute;background:#fff}
+.brand .mk::before{left:50%;top:4px;bottom:4px;width:1px;transform:translateX(-50%)}
+.brand .mk::after{top:50%;left:4px;right:4px;height:1px;transform:translateY(-50%)}
+.brand small{font-family:var(--mono);font-size:10px;color:var(--ink-5);padding:2px 6px;border:1px solid var(--line);border-radius:3px;font-weight:500}
+
+.nav-menu{display:flex;gap:2px;margin-left:8px}
+.nav-menu a{font-family:var(--en);font-size:13.5px;font-weight:500;color:var(--ink-3);padding:7px 12px;border-radius:5px;transition:all .15s}
+.nav-menu a:hover{background:var(--bg-2);color:var(--ink)}
+.nav-grow{flex:1}
+.nav-cta{display:flex;gap:8px;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 16px;border-radius:5px;
+  font-family:var(--en);font-size:13.5px;font-weight:500;
+  transition:all .15s;border:1px solid transparent;white-space:nowrap;
+}
+.btn-ghost{color:var(--ink-2)}
+.btn-ghost:hover{background:var(--bg-2)}
+.btn-line{border-color:var(--line-strong);color:var(--ink)}
+.btn-line:hover{border-color:var(--ink);background:var(--white)}
+.btn-solid{background:var(--ink);color:#fff}
+.btn-solid:hover{background:var(--black)}
+.btn .arr{transition:transform .15s}
+.btn:hover .arr{transform:translateX(2px)}
+.nav-toggle{display:none}
+
+@media (max-width:1080px){
+  .nav-menu a{padding:7px 9px;font-size:12.5px}
+  .nav-inner{gap:18px}
+}
+@media (max-width:980px){
+  .nav-menu{position:absolute;top:60px;left:0;right:0;flex-direction:column;background:#fff;border-bottom:1px solid var(--line);padding:8px 16px 14px;display:none}
+  .nav-menu.open{display:flex}
+  .nav-menu a{padding:11px 8px;font-size:15px;border-bottom:1px solid var(--line);border-radius:0}
+  .nav-menu a:last-child{border-bottom:0}
+  .nav-toggle{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:5px;border:1px solid var(--line-strong);background:#fff;margin-left:auto}
+  .nav-toggle span{display:block;width:14px;height:1.5px;background:var(--ink);position:relative}
+  .nav-toggle span::before,.nav-toggle span::after{content:"";position:absolute;left:0;width:14px;height:1.5px;background:var(--ink)}
+  .nav-toggle span::before{top:-4px}
+  .nav-toggle span::after{top:4px}
+  .nav-cta .btn-ghost{display:none}
+  .nav-grow{display:none}
+}
+@media (max-width:520px){
+  .nav-cta .btn-solid{padding:8px 12px;font-size:12.5px}
+}
+
+/* ──────────────  HERO  ────────────── */
+.hero{
+  position:relative;
+  border-bottom:1px solid var(--line);
+  background:var(--paper);
+  overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(10,10,9,.04) 1px,transparent 1px),
+    linear-gradient(90deg, rgba(10,10,9,.04) 1px, transparent 1px);
+  background-size:48px 48px;
+  background-position:-1px -1px;
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 30%, #000 50%, transparent 100%);
+  pointer-events:none;
+}
+.hero-meta-bar{
+  position:relative;z-index:2;
+  border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.4);
+}
+.hero-meta-bar-inner{
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  padding:11px 0;font-family:var(--mono);font-size:10.5px;
+  color:var(--ink-4);letter-spacing:.08em;text-transform:uppercase;
+}
+.hero-meta-bar b{color:var(--ink);font-weight:600}
+.hero-meta-bar .sep{width:1px;height:10px;background:var(--line-strong)}
+.hero-meta-bar .pulse{display:flex;align-items:center;gap:7px;color:var(--ink-2)}
+.hero-meta-bar .pulse::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 3px rgba(10,10,9,.10);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(10,10,9,.10)}50%{box-shadow:0 0 0 7px rgba(10,10,9,.02)}}
+
+.hero-inner{
+  position:relative;z-index:2;
+  padding:88px 0 100px;
+  display:grid;grid-template-columns:1.05fr 1fr;gap:64px;align-items:center;
+}
+@media (max-width:980px){.hero-inner{grid-template-columns:1fr;padding:64px 0 80px;gap:48px}}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  color:var(--ink-3);text-transform:uppercase;font-weight:500;
+  padding:5px 12px 5px 6px;border:1px solid var(--line-2);border-radius:999px;
+  background:#fff;
+}
+.hero-eyebrow .num{
+  font-family:var(--mono);font-weight:600;font-size:10px;
+  padding:3px 7px;background:var(--ink);color:#fff;border-radius:999px;letter-spacing:.04em;
+}
+
+.hero h1{
+  font-family:var(--th);font-weight:600;
+  font-size:clamp(40px,5.6vw,72px);
+  line-height:1.02;letter-spacing:-.022em;
+  margin:24px 0 24px;color:var(--ink);text-wrap:balance;
+}
+.hero h1 .row{display:block}
+.hero h1 .pre{
+  font-family:var(--mono);font-weight:500;
+  font-size:.18em;letter-spacing:.08em;color:var(--ink-4);
+  text-transform:uppercase;display:block;margin-bottom:14px;
+}
+.hero h1 em{
+  font-style:normal;position:relative;display:inline-block;
+}
+.hero h1 em::after{
+  content:"";position:absolute;left:0;right:0;bottom:.08em;height:.12em;
+  background:var(--ink);opacity:.92;
+}
+.hero h1 .strike{position:relative;display:inline-block}
+.hero h1 .strike::before{
+  content:"";position:absolute;left:-2px;right:-2px;top:50%;
+  border-top:2px solid var(--ink-2);transform:translateY(-50%) rotate(-2deg);
+}
+
+.hero p.lede{
+  font-size:17px;color:var(--ink-3);
+  max-width:520px;margin:0 0 32px;line-height:1.6;
+}
+
+.hero-ctas{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.btn-hero{padding:12px 22px;font-size:15px}
+
+.hero-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  border-top:1px solid var(--line);padding-top:24px;
+}
+@media (max-width:520px){.hero-stats{grid-template-columns:repeat(2,1fr);gap:18px 0}}
+.hero-stats > div{
+  padding-right:18px;border-right:1px solid var(--line);
+}
+.hero-stats > div:last-child{border-right:0}
+@media (max-width:520px){.hero-stats > div:nth-child(2n){border-right:0}}
+.hero-stats .lbl{font-family:var(--mono);font-size:10px;color:var(--ink-5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+.hero-stats .val{font-family:var(--en);font-size:22px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1}
+.hero-stats .val small{font-family:var(--mono);font-weight:500;font-size:14px;color:var(--ink-4);margin-left:2px;letter-spacing:0}
+
+/* ────  PRODUCT MOCKUP  ──── */
+.mock-frame{
+  position:relative;
+  background:#fff;
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  box-shadow:
+    0 1px 0 var(--white) inset,
+    0 24px 60px -20px rgba(10,10,9,.25),
+    0 6px 12px -4px rgba(10,10,9,.08);
+  overflow:hidden;
+}
+.mock-stamp{
+  position:absolute;left:-12px;top:24px;z-index:5;
+  background:var(--ink);color:#fff;
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  padding:6px 12px;letter-spacing:.08em;text-transform:uppercase;
+  border-radius:3px;
+  box-shadow:0 4px 12px rgba(10,10,9,.18);
+}
+.mock-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid var(--line);
+  background:var(--paper);
+}
+.mock-bar .ts{display:flex;gap:5px}
+.mock-bar .ts span{width:9px;height:9px;border-radius:50%;background:var(--bg-2);border:1px solid var(--line)}
+.mock-bar .path{
+  flex:1;background:#fff;border:1px solid var(--line);border-radius:4px;
+  padding:4px 10px;font-family:var(--mono);font-size:11px;color:var(--ink-4);
+  display:flex;align-items:center;gap:6px;
+}
+.mock-bar .path::before{content:"⌂";color:var(--ink-3)}
+.mock-bar .path b{color:var(--ink);font-weight:500}
+.mock-bar .opts{font-family:var(--mono);font-size:11px;color:var(--ink-4);display:flex;gap:10px}
+.mock-bar .opts span:hover{color:var(--ink)}
+
+.mock-grid{display:grid;grid-template-columns:160px 1fr;min-height:420px}
+
+.mock-side{
+  border-right:1px solid var(--line);
+  padding:12px 8px;background:var(--paper);
+}
+.mock-side h6{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;
+  color:var(--ink-5);text-transform:uppercase;font-weight:500;
+  padding:8px 10px 6px;margin:0;
+}
+.mock-side .it{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:4px;
+  font-family:var(--en);font-size:12.5px;color:var(--ink-3);
+  cursor:pointer;
+}
+.mock-side .it:hover{background:rgba(10,10,9,.04);color:var(--ink-2)}
+.mock-side .it.on{background:var(--ink);color:#fff}
+.mock-side .it .ic{
+  width:14px;height:14px;border:1.2px solid currentColor;border-radius:3px;
+  flex:none;opacity:.7;
+}
+.mock-side .it .ct{margin-left:auto;font-family:var(--mono);font-size:10px;opacity:.6}
+
+.mock-main{display:flex;flex-direction:column;background:#fff}
+.mock-main-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px;border-bottom:1px solid var(--line);
+}
+.mock-main-head .ttl{font-family:var(--en);font-weight:600;font-size:14px;color:var(--ink)}
+.mock-main-head .ttl small{font-family:var(--mono);font-weight:500;font-size:11px;color:var(--ink-5);margin-left:8px;letter-spacing:.04em}
+.mock-main-head .acts{display:flex;gap:6px}
+.mock-main-head .acts span{
+  font-family:var(--mono);font-size:10.5px;color:var(--ink-3);
+  padding:4px 9px;border:1px solid var(--line);border-radius:4px;letter-spacing:.04em;
+}
+.mock-main-head .acts span.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.mock-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.mock-card{
+  border:1px solid var(--line);border-radius:5px;padding:12px;background:#fff;
+  transition:border-color .15s;
+}
+.mock-card:hover{border-color:var(--ink)}
+.mock-card .tg{font-family:var(--mono);font-size:9.5px;color:var(--ink-5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.mock-card .nm{font-family:var(--en);font-weight:600;font-size:14px;color:var(--ink);letter-spacing:-.005em;margin-bottom:3px}
+.mock-card .sub{font-family:var(--mono);font-size:10.5px;color:var(--ink-4)}
+.mock-card .pct{
+  font-family:var(--en);font-weight:700;font-size:28px;color:var(--ink);letter-spacing:-.02em;line-height:1;margin-top:8px;
+}
+.mock-card .pct small{font-family:var(--mono);font-weight:500;font-size:11px;color:var(--ink-4);letter-spacing:.04em}
+
+.mock-rows{padding:6px 18px 16px}
+.mock-row{
+  display:grid;grid-template-columns:100px 1fr 60px 60px;gap:14px;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--line);
+  font-family:var(--en);font-size:12.5px;
+}
+.mock-row:last-child{border-bottom:0}
+.mock-row .nm{color:var(--ink);font-weight:500;letter-spacing:-.005em}
+.mock-row .bar{height:6px;background:var(--bg-2);border-radius:3px;position:relative;overflow:hidden}
+.mock-row .bar::after{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:var(--w,40%);background:var(--ink);
+  border-radius:3px;
+}
+.mock-row .pct-n{font-family:var(--mono);font-size:11px;color:var(--ink);text-align:right;font-weight:600}
+.mock-row .tag-n{font-family:var(--mono);font-size:10px;color:var(--ink-4);text-align:right;letter-spacing:.04em}
+
+/* floating callouts */
+.float{
+  position:absolute;z-index:6;
+  background:#fff;border:1px solid var(--line-strong);
+  border-radius:6px;padding:10px 12px;
+  font-family:var(--en);
+  box-shadow:0 16px 36px -8px rgba(10,10,9,.18),0 4px 8px rgba(10,10,9,.06);
+}
+.float.f1{right:-22px;top:30%}
+.float.f2{left:-26px;bottom:14%}
+@media (max-width:1100px){.float{display:none}}
+.float .lbl{font-family:var(--mono);font-size:9.5px;color:var(--ink-5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.float .val{font-family:var(--en);font-weight:700;font-size:18px;color:var(--ink);letter-spacing:-.01em;line-height:1.1;margin-bottom:6px}
+.float .row{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-3);padding:3px 0}
+.float .row::before{
+  content:"";width:13px;height:13px;border-radius:50%;
+  background:var(--ink) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2.5 6L5 8.5L9.5 4' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/8px no-repeat;
+  flex:none;
+}
+.float.f2{display:flex;align-items:center;gap:12px}
+.float .ring{
+  width:38px;height:38px;border-radius:50%;
+  background:conic-gradient(var(--ink) 72%, var(--bg-2) 0);
+  display:grid;place-items:center;flex:none;
+}
+.float .ring::after{
+  content:"72%";font-family:var(--mono);font-size:9.5px;font-weight:600;color:var(--ink);
+  background:#fff;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+}
+
+/* logos strip */
+.logos{border-top:1px solid var(--line);background:rgba(255,255,255,.4);position:relative;z-index:2}
+.logos-inner{
+  display:flex;align-items:center;gap:32px;flex-wrap:wrap;
+  padding:22px 0;
+}
+.logos-label{font-family:var(--mono);font-size:11px;color:var(--ink-5);letter-spacing:.08em;text-transform:uppercase}
+.logos-list{display:flex;gap:32px;flex-wrap:wrap;flex:1}
+.logo-item{font-family:var(--en);font-weight:600;font-size:14px;color:var(--ink-4);letter-spacing:-.01em}
+
+/* ──────────────  SECTION HEADER  ────────────── */
+section.s{padding:104px 0;border-bottom:1px solid var(--line);position:relative}
+section.s.alt{background:var(--white)}
+section.s.dark{background:var(--ink);color:#FAFAF9;border-color:var(--ink)}
+section.s.dark .s-kicker{color:#9F9F9C}
+section.s.dark .s-kicker::before{background:#9F9F9C}
+section.s.dark .s-head h2{color:#FAFAF9}
+section.s.dark .s-head p{color:#9F9F9C}
+@media (max-width:780px){section.s{padding:72px 0}}
+
+.s-head{display:grid;grid-template-columns:1fr 380px;gap:48px;margin-bottom:56px;align-items:end}
+@media (max-width:880px){.s-head{grid-template-columns:1fr;gap:24px}}
+.s-kicker{
+  font-family:var(--mono);font-size:11px;color:var(--ink-3);
+  letter-spacing:.12em;text-transform:uppercase;font-weight:500;
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+}
+.s-kicker::before{content:"";width:28px;height:1px;background:var(--ink-3)}
+.s-head h2{
+  font-family:var(--th);font-weight:600;
+  font-size:clamp(30px,3.4vw,46px);line-height:1.08;letter-spacing:-.014em;
+  margin:0;color:var(--ink);text-wrap:balance;max-width:720px;
+}
+.s-head p{font-size:15px;color:var(--ink-3);margin:0;line-height:1.6}
+
+/* ──────────────  MODULES  ────────────── */
+.modules{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;
+}
+@media (max-width:980px){.modules{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.modules{grid-template-columns:1fr}}
+.module{
+  padding:28px 26px 28px;
+  border-right:1px solid var(--line);position:relative;
+  transition:background .15s;display:flex;flex-direction:column;
+}
+.modules > .module:last-child{border-right:0}
+@media (max-width:980px){
+  .modules > .module:nth-child(2n){border-right:0}
+  .modules > .module:nth-child(1),.modules > .module:nth-child(2){border-bottom:1px solid var(--line)}
+}
+@media (max-width:560px){
+  .modules > .module{border-right:0;border-bottom:1px solid var(--line)}
+  .modules > .module:last-child{border-bottom:0}
+}
+.module:hover{background:var(--paper)}
+.module .head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px}
+.module .head .num{
+  font-family:var(--mono);font-weight:600;font-size:40px;color:var(--ink);
+  letter-spacing:-.02em;line-height:1;
+}
+.module .head .ct{
+  font-family:var(--mono);font-size:10px;color:var(--ink-5);
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.module .tag{
+  font-family:var(--mono);font-size:10px;color:var(--ink-4);
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;
+}
+.module h3{font-family:var(--en);font-size:18px;font-weight:600;letter-spacing:-.005em;margin:0 0 8px;color:var(--ink)}
+.module p{font-size:13.5px;color:var(--ink-3);margin:0 0 18px;line-height:1.55;flex:1}
+.module ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.module li{font-family:var(--en);font-size:12.5px;color:var(--ink-2);display:flex;align-items:center;gap:8px}
+.module li::before{content:"";width:14px;height:1px;background:var(--ink-5);flex:none}
+
+/* ──────────────  QUICK START  ────────────── */
+.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:980px){.quick-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.quick-grid{grid-template-columns:1fr}}
+.quick{
+  background:#fff;border:1px solid var(--line);border-radius:8px;
+  padding:24px;display:flex;flex-direction:column;gap:10px;
+  transition:all .15s;cursor:pointer;position:relative;
+}
+.quick:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 10px 30px -10px rgba(10,10,9,.12)}
+.quick .num{font-family:var(--mono);font-size:11px;color:var(--ink-5);letter-spacing:.08em;font-weight:500;text-transform:uppercase}
+.quick .ttl{font-family:var(--th);font-weight:600;font-size:17px;line-height:1.25;color:var(--ink);letter-spacing:-.005em}
+.quick .desc{font-size:13px;color:var(--ink-3);line-height:1.5;flex:1}
+.quick .foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:14px;border-top:1px solid var(--line);margin-top:auto;
+}
+.quick .badge{
+  font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+  padding:3px 8px;border-radius:3px;text-transform:uppercase;
+  background:var(--bg-2);color:var(--ink-2);font-weight:500;
+}
+.quick .badge.dark{background:var(--ink);color:#fff}
+.quick .arr-r{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.quick:hover .arr-r{color:var(--ink)}
+
+/* ──────────────  PAIN/SOLUTION/RESULT  ────────────── */
+.psr{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:840px){.psr{grid-template-columns:1fr}}
+.psr-col{
+  background:#fff;border:1px solid var(--line);border-radius:8px;padding:28px;
+  position:relative;display:flex;flex-direction:column;gap:14px;
+}
+.psr-col.result{background:var(--ink);color:#fff;border-color:var(--ink)}
+.psr-col.result .lbl{background:#fff;color:var(--ink);border-color:#fff}
+.psr-col.result h3{color:#fff}
+.psr-col.result p{color:rgba(250,250,249,.7)}
+.psr-col.result .list li{color:rgba(250,250,249,.85);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
+.psr-col.result .list li::before{color:rgba(250,250,249,.5)}
+.psr-col .lbl{
+  display:inline-flex;align-items:center;gap:8px;align-self:flex-start;
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:5px 10px;border:1px solid var(--line-strong);background:var(--paper);color:var(--ink-2);
+  border-radius:3px;font-weight:500;
+}
+.psr-col h3{font-family:var(--th);font-weight:600;font-size:21px;letter-spacing:-.005em;margin:0;color:var(--ink);line-height:1.25;text-wrap:balance}
+.psr-col p{font-size:13.5px;color:var(--ink-3);margin:0;line-height:1.55}
+.psr-col .list{list-style:none;padding:0;margin:auto 0 0;display:flex;flex-direction:column;gap:6px}
+.psr-col .list li{
+  font-family:var(--en);font-size:12.5px;color:var(--ink-2);
+  padding:9px 12px;background:var(--paper);border:1px solid var(--line);border-radius:4px;
+  display:flex;align-items:center;gap:10px;
+}
+.psr-col .list li::before{
+  content:attr(data-i);font-family:var(--mono);font-size:10px;color:var(--ink-5);min-width:20px;letter-spacing:.04em;
+}
+
+/* ──────────────  MARKETPLACE  ────────────── */
+.filters{
+  display:flex;flex-wrap:wrap;gap:4px;margin-bottom:32px;
+  padding:5px;background:#fff;border:1px solid var(--line);border-radius:7px;width:fit-content;
+}
+.chip{
+  font-family:var(--en);font-size:13px;font-weight:500;
+  padding:7px 14px;border-radius:4px;color:var(--ink-3);transition:all .15s;
+}
+.chip:hover{background:var(--bg-2)}
+.chip.active{background:var(--ink);color:#fff}
+.chip .ct{font-family:var(--mono);font-size:10px;opacity:.6;margin-left:6px;letter-spacing:.04em}
+
+.apps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:960px){.apps{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.apps{grid-template-columns:1fr}}
+.app{
+  background:#fff;border:1px solid var(--line);border-radius:8px;
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:all .15s;
+}
+.app:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 12px 30px -10px rgba(10,10,9,.10)}
+
+.app .preview{
+  height:188px;background:var(--paper);
+  border-bottom:1px solid var(--line);
+  position:relative;overflow:hidden;
+  padding:14px 16px;
+  font-family:var(--mono);font-size:10px;
+  color:var(--ink-2);letter-spacing:.02em;
+  display:flex;flex-direction:column;gap:6px;
+}
+.app .preview .pv-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--line);
+  font-size:9.5px;color:var(--ink-5);letter-spacing:.08em;text-transform:uppercase;flex:none;
+}
+.app .preview .pv-hdr b{color:var(--ink);font-weight:600;letter-spacing:.06em}
+.app .preview .pv-foot{
+  font-size:9.5px;color:var(--ink-3);letter-spacing:.04em;
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:auto;flex:none;
+}
+.app .preview .pv-foot b{color:var(--ink);font-weight:600}
+
+.app .body{padding:18px 22px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.app .cat{font-family:var(--mono);font-size:10px;color:var(--ink-5);letter-spacing:.08em;text-transform:uppercase;font-weight:500}
+.app h4{font-family:var(--en);font-size:17px;font-weight:600;letter-spacing:-.005em;margin:2px 0 0;color:var(--ink)}
+.app .desc{font-size:13px;color:var(--ink-3);margin:0;flex:1;line-height:1.55}
+.app .foot{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--line)}
+
+/* PREVIEW · PLAN REVIEW */
+.preview-plan .sheets{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:2px 4px 0}
+.preview-plan .sheet{
+  aspect-ratio:.92;border:1px solid var(--line-2);background:#fff;
+  position:relative;
+  background-image:
+    linear-gradient(transparent 38%,var(--line) 38%,var(--line) 39.2%,transparent 39.2%),
+    linear-gradient(transparent 58%,var(--line) 58%,var(--line) 59.2%,transparent 59.2%),
+    linear-gradient(transparent 78%,var(--line) 78%,var(--line) 79.2%,transparent 79.2%);
+}
+.preview-plan .sheet::before{
+  content:"";position:absolute;left:3px;top:3px;right:3px;height:5px;
+  background:var(--line);
+}
+.preview-plan .sheet .st{
+  position:absolute;top:-6px;right:-5px;
+  font-family:var(--mono);font-size:8px;width:13px;height:13px;
+  background:#fff;border:1px solid var(--line-strong);border-radius:50%;
+  display:grid;place-items:center;color:var(--ink-2);font-weight:700;
+}
+.preview-plan .sheet .st.k{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* PREVIEW · BOQ */
+.preview-boq table{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed;margin-top:-2px}
+.preview-boq td{padding:3px 0;color:var(--ink-2);font-family:var(--mono);letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preview-boq td:nth-child(1){color:var(--ink-5);width:20px}
+.preview-boq td:nth-child(2){color:var(--ink-2)}
+.preview-boq td:nth-child(3){text-align:right;color:var(--ink-4);width:28px}
+.preview-boq td:nth-child(4){text-align:right;color:var(--ink);font-weight:600;width:50px}
+.preview-boq tr.total td{
+  border-top:1px solid var(--line);padding-top:5px;color:var(--ink);font-weight:600;font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;
+}
+
+/* PREVIEW · RECEIPT */
+.preview-rcpt .extract{
+  flex:1;display:grid;grid-template-columns:1fr 1fr;gap:5px;align-content:center;
+}
+.preview-rcpt .field{
+  background:#fff;border:1px solid var(--line-2);border-radius:3px;
+  padding:6px 8px;
+}
+.preview-rcpt .field .l{font-size:8px;color:var(--ink-5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;font-weight:500}
+.preview-rcpt .field .v{font-family:var(--mono);font-size:11.5px;color:var(--ink);font-weight:600;letter-spacing:0;line-height:1.2}
+.preview-rcpt .field.hl{background:var(--ink);color:#fff;border-color:var(--ink)}
+.preview-rcpt .field.hl .l{color:#9F9F9C}
+.preview-rcpt .field.hl .v{color:#fff}
+
+/* PREVIEW · BRIEF */
+.preview-brief .item{
+  display:grid;grid-template-columns:14px 1fr 36px;gap:8px;align-items:center;
+  padding:2px 0;font-size:10.5px;
+}
+.preview-brief .item .m{font-family:var(--mono);font-weight:700;color:var(--ink);font-size:11px;text-align:center}
+.preview-brief .item .m.x{color:var(--ink-3)}
+.preview-brief .item .t{color:var(--ink-2);font-family:var(--en);font-size:11px;letter-spacing:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview-brief .item.flag .t{color:var(--ink)}
+.preview-brief .item .v{font-family:var(--mono);font-size:9px;color:var(--ink-5);text-align:right;letter-spacing:.06em;text-transform:uppercase}
+.preview-brief .item.flag .v{color:var(--ink);font-weight:600}
+
+/* PREVIEW · SPEC */
+.preview-spec .sec{
+  font-family:var(--en);font-size:11px;color:var(--ink);font-weight:600;
+  padding:2px 0;display:flex;align-items:baseline;gap:6px;
+}
+.preview-spec .sec::before{content:"▸";font-family:var(--mono);color:var(--ink-3);font-size:8px}
+.preview-spec .li{padding:1px 0 1px 16px;font-size:9.5px;color:var(--ink-3);font-family:var(--mono);letter-spacing:0}
+.preview-spec .li b{color:var(--ink);font-weight:600}
+
+/* PREVIEW · POST */
+.preview-post{flex-direction:row;gap:10px;padding-bottom:14px}
+.preview-post .pv-side{flex:none;display:flex;flex-direction:column;gap:6px}
+.preview-post .img{
+  width:78px;height:78px;
+  background:
+    repeating-linear-gradient(45deg,var(--bg-2) 0,var(--bg-2) 3px,var(--paper) 3px,var(--paper) 6px);
+  border:1px solid var(--line-2);
+  display:grid;place-items:center;
+  color:var(--ink-4);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;
+}
+.preview-post .pv-main{flex:1;display:flex;flex-direction:column;gap:0;min-width:0}
+.preview-post .pv-hdr{margin-bottom:6px;padding-bottom:6px}
+.preview-post .text{flex:1;display:flex;flex-direction:column;gap:4px;justify-content:center}
+.preview-post .text .ln{height:5px;background:var(--line);border-radius:2px}
+.preview-post .text .ln.short{width:62%}
+.preview-post .text .ln.shorter{width:40%}
+.preview-post .tags{font-family:var(--mono);font-size:9px;color:var(--ink-3);letter-spacing:0;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview-post .tags b{color:var(--ink);font-weight:600}
+
+/* PREVIEW · SITE */
+.preview-site .row{
+  display:grid;grid-template-columns:14px 1fr 36px;gap:8px;align-items:center;
+  font-size:10.5px;color:var(--ink-2);padding:1.5px 0;font-family:var(--en);
+}
+.preview-site .row .m{font-family:var(--mono);font-size:11px;color:var(--ink);font-weight:700;text-align:center}
+.preview-site .row.done .t{color:var(--ink-4);text-decoration:line-through;text-decoration-thickness:1px;text-decoration-color:var(--ink-5)}
+.preview-site .row .ts{font-family:var(--mono);font-size:9px;color:var(--ink-5);text-align:right;letter-spacing:.04em}
+.preview-site .photos{display:flex;gap:4px;margin-top:4px}
+.preview-site .ph{
+  width:18px;height:18px;
+  background:repeating-linear-gradient(45deg,var(--bg-2) 0,var(--bg-2) 3px,var(--paper) 3px,var(--paper) 6px);
+  border:1px solid var(--line-2);
+}
+
+/* PREVIEW · PROMPT */
+.preview-prompt .stack{position:relative;height:80px;margin:0 -2px}
+.preview-prompt .pc{
+  position:absolute;left:0;right:18px;
+  background:#fff;border:1px solid var(--line-2);
+  padding:6px 8px;font-family:var(--mono);font-size:9px;color:var(--ink-3);
+  letter-spacing:0;line-height:1.4;border-radius:3px;
+}
+.preview-prompt .pc.p1{top:0;transform:rotate(-1.5deg)}
+.preview-prompt .pc.p2{top:14px;left:10px;right:24px;transform:rotate(.8deg)}
+.preview-prompt .pc.p3{top:30px;left:18px;right:6px;background:var(--ink);color:#9F9F9C;border-color:var(--ink);padding:8px 10px}
+.preview-prompt .pc b{color:var(--ink);font-weight:600;font-family:var(--en);font-size:10px;letter-spacing:-.005em;display:block;margin-bottom:2px}
+.preview-prompt .pc.p3 b{color:#fff}
+
+/* PREVIEW · AGENT */
+.preview-agent .flow{
+  display:grid;grid-template-columns:1fr 14px 1fr 14px 1fr;align-items:stretch;gap:0;
+}
+.preview-agent .node{
+  background:#fff;border:1px solid var(--line-2);
+  border-radius:3px;padding:8px 4px;text-align:center;
+  font-family:var(--mono);font-size:8.5px;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase;
+}
+.preview-agent .node.k{background:var(--ink);color:#9F9F9C;border-color:var(--ink)}
+.preview-agent .node b{display:block;font-size:10.5px;font-weight:700;color:var(--ink);letter-spacing:.08em;margin-bottom:3px}
+.preview-agent .node.k b{color:#fff}
+.preview-agent .arr{
+  font-family:var(--mono);font-size:11px;color:var(--ink-3);text-align:center;font-weight:500;
+  display:grid;place-items:center;
+}
+.badge{
+  font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.04em;
+  padding:3px 8px;border-radius:3px;text-transform:uppercase;
+  background:var(--paper);color:var(--ink-3);border:1px solid var(--line);
+}
+.badge.k{background:var(--ink);color:#fff;border-color:var(--ink)}
+.badge.o{background:#fff;color:var(--ink);border-color:var(--ink)}
+.badge.ai::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;margin-right:6px;vertical-align:middle}
+
+/* ──────────────  WORKFLOW  ────────────── */
+.wf-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;
+}
+@media (max-width:840px){.wf-grid{grid-template-columns:1fr}}
+.wf{padding:32px 28px;border-right:1px solid var(--line);position:relative;display:flex;flex-direction:column}
+.wf-grid > .wf:last-child{border-right:0}
+@media (max-width:840px){.wf-grid > .wf{border-right:0;border-bottom:1px solid var(--line)}.wf-grid > .wf:last-child{border-bottom:0}}
+.wf .step{
+  font-family:var(--mono);font-size:11px;color:var(--ink-5);letter-spacing:.1em;text-transform:uppercase;
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;font-weight:500;
+}
+.wf .step b{color:var(--ink);font-weight:600}
+.wf .step .arr{
+  width:18px;height:18px;border:1px solid var(--line-strong);border-radius:50%;
+  display:grid;place-items:center;font-size:10px;color:var(--ink-3);
+}
+.wf h3{font-family:var(--th);font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 12px;color:var(--ink)}
+.wf > p{font-size:14px;color:var(--ink-3);margin:0 0 24px;line-height:1.6;flex:1}
+.wf-demo{
+  background:var(--ink);color:#fff;border-radius:5px;padding:14px 16px;font-family:var(--mono);
+  font-size:11.5px;line-height:1.7;
+}
+.wf-demo .l{display:flex;gap:8px;align-items:baseline}
+.wf-demo .l .t{color:#9F9F9C;font-size:10px;flex:none;width:50px}
+.wf-demo .l .s{color:#fff;flex:none;width:12px}
+.wf-demo .l .s.ok{color:#fff}
+.wf-demo .l .m{color:rgba(255,255,255,.85)}
+.wf-demo .l .m b{color:#fff}
+.wf-demo .l .m .dim{color:#9F9F9C}
+.wf-demo hr{border:0;border-top:1px dashed rgba(255,255,255,.1);margin:6px 0}
+.wf-demo .blink::after{content:"▊";animation:bl 1s infinite;margin-left:2px}
+@keyframes bl{50%{opacity:0}}
+
+/* ──────────────  TRUST  ────────────── */
+.trust{display:grid;grid-template-columns:1fr 420px;gap:64px;align-items:start}
+@media (max-width:980px){.trust{grid-template-columns:1fr;gap:36px}}
+.trust-list{border-top:1px solid var(--line)}
+.trust-item{
+  padding:24px 0;border-bottom:1px solid var(--line);
+  display:grid;grid-template-columns:120px 1fr;gap:24px;align-items:start;
+}
+.trust-item .n{font-family:var(--mono);font-size:10.5px;color:var(--ink-5);letter-spacing:.08em;text-transform:uppercase;font-weight:500}
+.trust-item h4{font-family:var(--en);font-size:16px;font-weight:600;letter-spacing:-.005em;margin:0 0 6px;color:var(--ink)}
+.trust-item p{font-size:13.5px;color:var(--ink-3);margin:0;line-height:1.6}
+
+.trust-panel{
+  background:var(--ink);color:#fff;border-radius:10px;padding:32px;
+  position:sticky;top:80px;
+  background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+.trust-panel-inner{background:rgba(10,10,9,.6);backdrop-filter:blur(2px);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:24px}
+.trust-panel h3{font-family:var(--th);font-size:22px;font-weight:600;color:#fff;margin:0 0 8px;letter-spacing:-.005em}
+.trust-panel > .trust-panel-inner > p{font-size:13.5px;color:rgba(250,250,249,.7);margin:0 0 20px}
+.trust-panel .row{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 0;border-top:1px solid rgba(255,255,255,.08);
+  font-family:var(--en);font-size:13px;color:#fff;
+}
+.trust-panel .row .l{font-family:var(--mono);font-size:10px;color:#9F9F9C;letter-spacing:.06em;width:80px;flex:none;font-weight:500}
+.trust-panel .row .v{flex:1}
+.trust-panel .row .ok{font-family:var(--mono);font-size:10.5px;color:#FAFAF9;display:flex;align-items:center;gap:5px;letter-spacing:.04em}
+.trust-panel .row .ok::before{content:"●";font-size:7px}
+
+/* ──────────────  PRICING  ────────────── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:840px){.pricing-grid{grid-template-columns:1fr}}
+.price{
+  background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:32px 28px;display:flex;flex-direction:column;gap:0;position:relative;
+}
+.price.feat{background:var(--ink);color:#fff;border-color:var(--ink);box-shadow:0 24px 60px -16px rgba(10,10,9,.32)}
+.price.feat .tier,.price.feat .val{color:#fff}
+.price.feat .desc{color:#9F9F9C}
+.price.feat .feats{border-color:rgba(255,255,255,.12)}
+.price.feat .feat{color:rgba(250,250,249,.85)}
+.price.feat .feat::before{background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2.5 6L5 8.5L9.5 4' stroke='%230A0A09' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/9px no-repeat}
+.price .rib{
+  position:absolute;top:-1px;right:24px;
+  background:#fff;color:var(--ink);
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  padding:6px 12px;border-radius:0 0 5px 5px;text-transform:uppercase;letter-spacing:.06em;
+}
+.price .tier{
+  font-family:var(--mono);font-weight:600;font-size:12px;
+  color:var(--ink);letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase;
+}
+.price .desc{font-size:13px;color:var(--ink-3);margin-bottom:24px;min-height:38px}
+.price .val{
+  font-family:var(--en);font-weight:700;font-size:46px;
+  letter-spacing:-.025em;line-height:1;margin-bottom:6px;color:var(--ink);
+}
+.price .val sup{font-size:18px;font-weight:500;color:var(--ink-3);margin-right:2px;vertical-align:top;top:.55em;position:relative}
+.price .val small{font-family:var(--en);font-size:13px;font-weight:500;color:var(--ink-3);letter-spacing:0;margin-left:4px}
+.price.feat .val sup,.price.feat .val small{color:#9F9F9C}
+.price-cta{margin:24px 0 24px}
+.price-cta .btn{width:100%;justify-content:center;padding:11px 16px}
+.price.feat .price-cta .btn-solid{background:#fff;color:var(--ink)}
+.price.feat .price-cta .btn-solid:hover{background:var(--paper)}
+.feats{list-style:none;padding:24px 0 0;margin:0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.feat{
+  font-family:var(--en);font-size:13.5px;color:var(--ink-2);
+  display:flex;align-items:flex-start;gap:10px;padding-left:0;line-height:1.55;
+}
+.feat::before{
+  content:"";width:14px;height:14px;border-radius:50%;
+  background:var(--ink) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2.5 6L5 8.5L9.5 4' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/9px no-repeat;
+  margin-top:3px;flex:none;
+}
+
+/* ──────────────  FAQ  ────────────── */
+.faq-grid{display:grid;grid-template-columns:340px 1fr;gap:64px}
+@media (max-width:880px){.faq-grid{grid-template-columns:1fr;gap:32px}}
+.faq-side h2{font-family:var(--th);font-size:32px;font-weight:600;letter-spacing:-.012em;margin:0 0 14px;line-height:1.1;text-wrap:balance}
+.faq-side p{font-size:14px;color:var(--ink-3);margin:0 0 18px;line-height:1.6}
+.faq-side a{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.faq-list{border-top:1px solid var(--line)}
+details.faq{border-bottom:1px solid var(--line)}
+details.faq summary{
+  list-style:none;cursor:pointer;padding:22px 16px 22px 0;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  font-family:var(--th);font-weight:500;font-size:16px;color:var(--ink);letter-spacing:-.005em;
+}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::after{
+  content:"+";font-family:var(--mono);font-size:18px;color:var(--ink-3);
+  width:22px;height:22px;display:grid;place-items:center;flex:none;transition:transform .2s;
+}
+details.faq[open] summary::after{content:"−"}
+details.faq .ans{padding:0 0 22px;font-size:14px;color:var(--ink-3);line-height:1.7;max-width:640px}
+
+/* ──────────────  DEVELOPER  ────────────── */
+.dev-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
+@media (max-width:880px){.dev-grid{grid-template-columns:1fr}}
+.dev-card{
+  background:#0F0F0E;border:1px solid rgba(255,255,255,.12);border-radius:10px;overflow:hidden;
+}
+.dev-head{padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:14px}
+.dev-avatar{
+  width:48px;height:48px;border-radius:50%;
+  background:#fff;color:var(--ink);
+  display:grid;place-items:center;
+  font-family:var(--brand);font-weight:700;font-size:20px;flex:none;
+}
+.dev-head .name{font-family:var(--en);font-weight:600;font-size:15px;color:#fff}
+.dev-head .role{font-family:var(--mono);font-size:11px;color:#9F9F9C;letter-spacing:.04em;margin-top:2px}
+.dev-head .v{margin-left:auto;font-family:var(--mono);font-size:11px;color:#fff;display:flex;align-items:center;gap:6px}
+.dev-head .v::before{content:"●";font-size:7px}
+.dev-body{padding:22px;display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,.08)}
+.dev-stat{padding-right:22px;border-right:1px solid rgba(255,255,255,.08)}
+.dev-stat:last-child{border-right:0;padding-right:0;padding-left:22px}
+.dev-stat .l{font-family:var(--mono);font-size:10px;color:#9F9F9C;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.dev-stat .v{font-family:var(--en);font-weight:600;font-size:24px;color:#fff;letter-spacing:-.01em}
+.dev-foot{padding:18px 22px;display:flex;flex-direction:column;gap:8px}
+.dev-foot .l{font-family:var(--mono);font-size:11px;display:flex;justify-content:space-between;color:#9F9F9C}
+.dev-foot .l span:last-child{color:#fff}
+
+/* ──────────────  FOOTER  ────────────── */
+footer{background:var(--ink);color:#9F9F9C;padding:64px 0 32px;font-family:var(--en);font-size:13px}
+.foot-grid{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr 1fr;gap:32px;margin-bottom:48px}
+@media (max-width:840px){.foot-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.foot-grid{grid-template-columns:1fr}}
+.foot-brand{font-family:var(--brand);font-weight:700;font-size:20px;color:#fff;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.foot-col h6{font-family:var(--mono);font-size:11px;color:#9F9F9C;letter-spacing:.08em;text-transform:uppercase;margin:0 0 14px;font-weight:500}
+.foot-col a{display:block;padding:5px 0;color:#C8C8C5;transition:color .15s}
+.foot-col a:hover{color:#fff}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:11px;color:#9F9F9C;letter-spacing:.04em}
+.foot-bottom .ok{display:flex;align-items:center;gap:8px;color:#fff}
+.foot-bottom .ok::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.15)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav" data-screen-label="Nav">
+  <div class="wrap nav-inner" style="font-family: &quot;Architects Daughter&quot;">
+    <a class="brand" href="#">
+      <span class="mk" style="font-family: &quot;Architects Daughter&quot;"></span>
+      <span>Build<span style="font-weight:500">By</span>BIM</span>
+      <small class="en">.space</small>
+    </a>
+    <nav class="nav-menu en" id="navMenu">
+      <a href="#apps">Apps</a>
+      <a href="#tools">Tools</a>
+      <a href="#prompts">Prompts</a>
+      <a href="#workflows">Workflows</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#developer">Developer</a>
+    </nav>
+    <div class="nav-grow"></div>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost en">Sign in</a>
+      <a href="#tools" class="btn btn-solid">เริ่มจาก Tools ฟรี <span class="arr">→</span></a>
+    </div>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.getElementById('navMenu').classList.toggle('open')"><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" data-screen-label="Hero">
+  <div class="hero-meta-bar">
+    <div class="wrap hero-meta-bar-inner">
+      <span><b>BUILDBYBIM.SPACE</b> / v0.4.2 — 23 MAY 2026</span>
+      <span class="sep"></span>
+      <span>SHEET 01 / 12 · LANDING</span>
+      <span class="sep"></span>
+      <span class="pulse">All systems operational · 99.96% uptime</span>
+    </div>
+  </div>
+
+  <div class="wrap hero-inner">
+    <div style="font-family: &quot;Architects Daughter&quot;">
+      <span class="hero-eyebrow">
+        <span class="num">v0.4</span>
+        Construction · Design · AI Workflow
+      </span>
+      <h1>
+        <span class="pre">A productivity platform — Bangkok, 2026</span>
+        <span class="row" style="font-family: Merriweather; font-weight: 100; text-align: left; letter-spacing: 0px">รวมเครื่องมือทำงาน</span>
+        <span class="row">สำหรับก่อสร้าง <em>ออกแบบ</em></span>
+        <span class="row">และ AI Workflow</span>
+      </h1>
+      <p class="lede">เริ่มจากเครื่องมือเล็กที่แก้ปัญหาเฉพาะหน้าได้ทันที แล้วค่อยบันทึกข้อมูลเป็น workspace สำหรับงานซ้ำ เอกสาร ทีม support และ agent automation ในอนาคต</p>
+      <div class="hero-ctas">
+        <a href="#tools" class="btn btn-solid btn-hero">เลือกงานที่ต้องทำ <span class="arr">→</span></a>
+        <a href="#apps" class="btn btn-line btn-hero en">ดูโมดูลทั้งหมด</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="lbl">Tools &amp; Apps</div>
+          <div class="val">42</div>
+        </div>
+        <div>
+          <div class="lbl">Workflows</div>
+          <div class="val">12</div>
+        </div>
+        <div>
+          <div class="lbl">Prompt sets</div>
+          <div class="val">240<small>+</small></div>
+        </div>
+        <div>
+          <div class="lbl">Privacy</div>
+          <div class="val" style="font-size:15px;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase">Source-first</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- product mockup -->
+    <div style="position:relative">
+      <div class="mock-frame" aria-hidden="true">
+        <span class="mock-stamp">Live preview</span>
+        <div class="mock-bar">
+          <div class="ts"><span></span><span></span><span></span></div>
+          <div class="path">buildbybim.space / <b>workspace / A-204</b></div>
+          <div class="opts"><span>⌘K</span><span>?</span></div>
+        </div>
+        <div class="mock-grid">
+          <aside class="mock-side">
+            <h6>Workspace</h6>
+            <div class="it on"><span class="ic"></span>Plan Review<span class="ct">3</span></div>
+            <div class="it"><span class="ic"></span>BOQ Builder<span class="ct">7</span></div>
+            <div class="it"><span class="ic"></span>Receipt Intake</div>
+            <div class="it"><span class="ic"></span>Brief Check</div>
+            <h6>Workflows</h6>
+            <div class="it"><span class="ic"></span>Post Generator</div>
+            <div class="it"><span class="ic"></span>Doc Converter</div>
+            <div class="it"><span class="ic"></span>LINE Intake</div>
+          </aside>
+          <main class="mock-main">
+            <div class="mock-main-head">
+              <div class="ttl">Plan Review<small>A-204 · v3 · 24 sheets</small></div>
+              <div class="acts"><span>Plan</span><span class="on">Section</span><span>3D</span></div>
+            </div>
+            <div class="mock-cards">
+              <div class="mock-card">
+                <div class="tg">DRAWINGS</div>
+                <div class="nm">Sheets parsed</div>
+                <div class="sub">24 / 24 · v3</div>
+                <div class="pct">100<small>%</small></div>
+              </div>
+              <div class="mock-card">
+                <div class="tg">BOQ</div>
+                <div class="nm">Lines drafted</div>
+                <div class="sub">128 / 142 items</div>
+                <div class="pct">91<small>%</small></div>
+              </div>
+              <div class="mock-card">
+                <div class="tg">ISSUES</div>
+                <div class="nm">Flagged</div>
+                <div class="sub">awaiting review</div>
+                <div class="pct">06</div>
+              </div>
+            </div>
+            <div class="mock-rows">
+              <div class="mock-row" style="--w:78%"><span class="nm">Foundation</span><div class="bar"></div><span class="pct-n">78%</span><span class="tag-n">F1</span></div>
+              <div class="mock-row" style="--w:62%"><span class="nm">Structure</span><div class="bar"></div><span class="pct-n">62%</span><span class="tag-n">F2</span></div>
+              <div class="mock-row" style="--w:45%"><span class="nm">MEP Coord.</span><div class="bar"></div><span class="pct-n">45%</span><span class="tag-n">F3</span></div>
+              <div class="mock-row" style="--w:28%"><span class="nm">Finishing</span><div class="bar"></div><span class="pct-n">28%</span><span class="tag-n">F4</span></div>
+            </div>
+          </main>
+        </div>
+      </div>
+      <div class="float f1">
+        <div class="lbl">Quick Check · 1.2s</div>
+        <div class="val">A-204 ready</div>
+        <div class="row">Drawing scale match</div>
+        <div class="row">Sheet index updated</div>
+      </div>
+      <div class="float f2">
+        <div class="ring"></div>
+        <div>
+          <div class="lbl">BOQ confidence</div>
+          <div class="val" style="margin:0">128 / 178</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="logos">
+    <div class="wrap logos-inner">
+      <span class="logos-label">Trusted by</span>
+      <div class="logos-list">
+        <span class="logo-item">Studio Korn</span>
+        <span class="logo-item">PRP Engineering</span>
+        <span class="logo-item">Habita Design</span>
+        <span class="logo-item">SCC Build</span>
+        <span class="logo-item">Atelier 31</span>
+        <span class="logo-item">Northsite Co.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section class="s alt" id="apps" data-screen-label="Modules">
+  <div class="wrap">
+    <div class="s-head">
+      <div>
+        <div class="s-kicker">01 / Module Overview</div>
+        <h2>สี่โมดูลหลัก ออกแบบให้ทำงานต่อกันได้<br>ตั้งแต่ tool เล็กไปจนถึง agent</h2>
+      </div>
+      <p>เลือกใช้แค่ส่วนที่ต้องการก่อนก็ได้ — ทุก tool เก็บข้อมูลในรูปแบบเดียวกัน เพื่อต่อยอดเป็น workflow, prompt set, หรือป้อนให้ AI agent ภายหลังโดยไม่ต้องทำใหม่</p>
+    </div>
+
+    <div class="modules">
+      <article class="module">
+        <div class="head"><span class="num">01</span><span class="ct">14 apps</span></div>
+        <div class="tag">Construction</div>
+        <h3>Construction Tools</h3>
+        <p>ตรวจแปลน, BOQ, สลิป, checklist หน้างาน — เครื่องมือเล็กที่ใช้ได้ทันที</p>
+        <ul>
+          <li>Plan Review</li>
+          <li>BOQ Builder</li>
+          <li>Site Checklist</li>
+          <li>Receipt Intake</li>
+        </ul>
+      </article>
+      <article class="module">
+        <div class="head"><span class="num">02</span><span class="ct">11 apps</span></div>
+        <div class="tag">Design</div>
+        <h3>Design / Architect Brain</h3>
+        <p>ช่วยตรวจ brief, generate moodboard, drafting proposal และ document</p>
+        <ul>
+          <li>Brief Check</li>
+          <li>Spec Writer</li>
+          <li>Moodboard Layout</li>
+          <li>Proposal Draft</li>
+        </ul>
+      </article>
+      <article class="module">
+        <div class="head"><span class="num">03</span><span class="ct">9 apps</span></div>
+        <div class="tag">AI Workflow</div>
+        <h3>AI Workflow</h3>
+        <p>Prompt Set, Workflow, Agent — รวมเครื่องมือที่ใช้ AI ทำงานจริงทุกวัน</p>
+        <ul>
+          <li>Prompt Library</li>
+          <li>Saved Workflows</li>
+          <li>LINE Agent</li>
+          <li>Content Draft</li>
+        </ul>
+      </article>
+      <article class="module">
+        <div class="head"><span class="num">04</span><span class="ct">8 apps</span></div>
+        <div class="tag">Support</div>
+        <h3>Support Platform</h3>
+        <p>Workspace, plan, permission, admin — ใช้คนเดียวหรือทั้งทีมก็ได้</p>
+        <ul>
+          <li>Saved Workspace</li>
+          <li>Member Support</li>
+          <li>Permission Rules</li>
+          <li>Admin Console</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK START -->
+<section class="s" id="tools" data-screen-label="Quick Start">
+  <div class="wrap">
+    <div class="s-head">
+      <div>
+        <div class="s-kicker">02 / Quick Start</div>
+        <h2>เริ่มจาก tool เดียวก่อน เลือกงานที่ต้องทำตอนนี้</h2>
+      </div>
+      <p>ไม่ต้องสมัครก่อน ไม่ต้อง config อะไรเยอะ เริ่มจากเครื่องมือฟรีที่ใช้บ่อยที่สุด แล้วค่อยขยับขึ้นเมื่อจำเป็น</p>
+    </div>
+
+    <div class="quick-grid">
+      <a class="quick">
+        <div class="num">QS · 01</div>
+        <div class="ttl">ตรวจแปลน / ตรวจ brief</div>
+        <div class="desc">อัปโหลด drawing หรือ brief พร้อม checklist อัตโนมัติ ก่อนเข้าประชุม</div>
+        <div class="foot"><span class="badge">Free</span><span class="arr-r">→</span></div>
+      </a>
+      <a class="quick">
+        <div class="num">QS · 02</div>
+        <div class="ttl">ทำ BOQ / เอกสาร</div>
+        <div class="desc">สร้าง BOQ จากสเปคหรือ drawing ส่งออกเป็น Excel/PDF ได้ทันที</div>
+        <div class="foot"><span class="badge">Free</span><span class="arr-r">→</span></div>
+      </a>
+      <a class="quick">
+        <div class="num">QS · 03</div>
+        <div class="ttl">สร้างโพสต์ Facebook</div>
+        <div class="desc">แปลงงานในมือเป็น caption + hashtag + แนะนำภาพ ใน 1 คลิก</div>
+        <div class="foot"><span class="badge">Free</span><span class="arr-r">→</span></div>
+      </a>
+      <a class="quick">
+        <div class="num">QS · 04</div>
+        <div class="ttl">ส่งสลิปผ่าน LINE</div>
+        <div class="desc">ส่งสลิปเข้า LINE bot ระบบจะอ่านยอด วันที่ และจัดให้เป็น draft</div>
+        <div class="foot"><span class="badge dark">Member</span><span class="arr-r">→</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN / SOLUTION / RESULT -->
+<section class="s alt" data-screen-label="Pain Solution Result">
+  <div class="wrap">
+    <div class="s-head">
+      <div>
+        <div class="s-kicker">03 / Why Buildbybim</div>
+        <h2>หยุดทำงานเดิมซ้ำ ๆ ใน 3 ที่ — เริ่มจากปัญหาจริง<br>จบที่ข้อมูลที่ต่อยอดได้</h2>
+      </div>
+      <p>ปัญหาในงานก่อสร้าง / ออกแบบ ส่วนใหญ่ไม่ใช่ของยาก แค่กระจาย ใช้หลายเครื่องมือ ไม่ต่อยอด — เราออกแบบให้ทุก output sync กลับเข้า workspace เดียว</p>
+    </div>
+
+    <div class="psr">
+      <div class="psr-col">
+        <span class="lbl">— Pain · ปัญหา</span>
+        <h3>งานกระจัดกระจาย ใช้หลายเครื่องมือ</h3>
+        <p>ตรวจแปลนใน PDF, ทำ BOQ ใน Excel, ส่งสลิปใน LINE, สร้างโพสต์ใน Canva — ข้อมูลกระจาย ไม่ต่อยอด</p>
+        <ul class="list">
+          <li data-i="01">copy-paste ข้ามไฟล์</li>
+          <li data-i="02">หา draft เก่าไม่เจอ</li>
+          <li data-i="03">ทำเอกสารซ้ำทุกโปรเจกต์</li>
+          <li data-i="04">AI ใช้ทีละครั้ง ไม่จำ context</li>
+        </ul>
+      </div>
+      <div class="psr-col">
+        <span class="lbl">→ Solution · วิธีแก้</span>
+        <h3>เริ่มจาก tool เล็ก เก็บผลลัพธ์ในที่เดียว</h3>
+        <p>เลือก tool ที่ตรงปัญหา ใช้งานทันที — ผลลัพธ์ทุกครั้งกลับเข้า workspace เป็นข้อมูลโครงสร้างที่ AI agent ใช้ต่อได้</p>
+        <ul class="list">
+          <li data-i="01">tool ใช้งานในไม่กี่วินาที</li>
+          <li data-i="02">เก็บผลลัพธ์ทุกครั้งใน workspace</li>
+          <li data-i="03">prompt set สำเร็จรูปต่อสายงาน</li>
+          <li data-i="04">workflow เชื่อม tool ต่อกันได้</li>
+        </ul>
+      </div>
+      <div class="psr-col result">
+        <span class="lbl">✓ Result · ผลลัพธ์</span>
+        <h3>ข้อมูลถูกเก็บไว้ ต่อยอดอัตโนมัติ</h3>
+        <p>โปรเจกต์ถัดไปไม่ต้องเริ่มจาก 0 — agent หา draft, spec, ผู้รับเหมา และ template เดิมที่ทีมใช้แล้วได้เอง</p>
+        <ul class="list">
+          <li data-i="01">เริ่มงานใหม่เร็วขึ้น 4-6 เท่า</li>
+          <li data-i="02">draft พร้อม approve ใน 1 คลิก</li>
+          <li data-i="03">agent อ่าน workspace ของทีมได้</li>
+          <li data-i="04">export ได้ทุกฟอร์แมต</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP MARKETPLACE -->
+<section class="s" data-screen-label="App Marketplace">
+  <div class="wrap">
+    <div class="s-head">
+      <div>
+        <div class="s-kicker">04 / App Marketplace</div>
+        <h2>42 แอปพร้อมใช้ จัดหมวดตามงานจริง</h2>
+      </div>
+      <p>ทุกแอประบุชัดเจนว่าใช้ได้ฟรี / member / support, ใช้ AI หรือไม่, เก็บข้อมูล privacy level ไหน</p>
+    </div>
+
+    <div class="filters" role="tablist">
+      <button class="chip active">ทั้งหมด <span class="ct">42</span></button>
+      <button class="chip">Construction <span class="ct">14</span></button>
+      <button class="chip">Design <span class="ct">11</span></button>
+      <button class="chip">AI Workflow <span class="ct">9</span></button>
+      <button class="chip">Tools <span class="ct">8</span></button>
+    </div>
+
+    <div class="apps">
+      <article class="app">
+        <div class="preview preview-plan">
+          <div class="pv-hdr"><b>A-204 · v3</b><span>24 sheets</span></div>
+          <div class="sheets">
+            <div class="sheet"><span class="st">✓</span></div>
+            <div class="sheet"><span class="st">✓</span></div>
+            <div class="sheet"><span class="st k">!</span></div>
+            <div class="sheet"><span class="st">✓</span></div>
+          </div>
+          <div class="pv-foot"><span>checked · 1.2s</span><b>6 issues</b></div>
+        </div>
+        <div class="body">
+          <div>
+            <div class="cat">Construction</div>
+            <h4>Plan Review</h4>
+          </div>
+          <p class="desc">อัปโหลด drawing PDF/DWG → checklist scale, title block, sheet index ใน 1 นาที พร้อมเปรียบเทียบเวอร์ชัน</p>
+          <div class="foot">
+            <span class="badge k">Free</span>
+            <span class="badge ai">AI</span>
+            <span class="badge">Private</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="app">
+        <div class="preview preview-boq">
+          <div class="pv-hdr"><b>BOQ · A-204</b><span>v3 draft</span></div>
+          <table>
+            <tr><td>01</td><td>ปูน 50kg</td><td>24</td><td>฿4.8K</td></tr>
+            <tr><td>02</td><td>เหล็ก เส้น</td><td>120</td><td>฿18K</td></tr>
+            <tr><td>03</td><td>ไม้ 2"</td><td>8</td><td>฿2.4K</td></tr>
+            <tr class="total"><td colspan="3">128 items · total</td><td>฿2.4M</td></tr>
+          </table>
+        </div>
+        <div class="body">
+          <div>
+            <div class="cat">Construction</div>
+            <h4>BOQ Builder</h4>
+          </div>
+          <p class="desc">Drawing/spec → ดึง quantity อัตโนมัติ → ตาราง BOQ ส่งออก Excel/PDF พร้อมเทียบราคาผู้ขาย</p>
+          <div class="foot">
+            <span class="badge">Starter</span>
+            <span class="badge ai">AI</span>
+            <span class="badge">Saves data</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="app">
+        <div class="preview preview-rcpt">
+          <div class="pv-hdr"><b>RECEIPT · LINE</b><span>10:24</span></div>
+          <div class="extract">
+            <div class="field hl">
+              <div class="l">amount</div>
+              <div class="v">฿ 1,250</div>
+            </div>
+            <div class="field">
+              <div class="l">date</div>
+              <div class="v">24/05/26</div>
+            </div>
+            <div class="field">
+              <div class="l">vendor</div>
+              <div class="v">บจก. ก.</div>
+            </div>
+            <div class="field">
+              <div class="l">status</div>
+              <div class="v">draft</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div>
+            <div class="cat">Construction</div>
+            <h4>Receipt Intake</h4>
+          </div>
+          <p class="desc">ส่งสลิป/รูปเข้า LINE → อ่านยอด วันที่ ผู้รับอัตโนมัติ → draft รอ confirm ก่อนลงบัญชี</p>
+          <div class="foot">
+            <span class="badge o">Support</span>
+            <span class="badge ai">AI</span>
+            <span class="badge">LINE</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="app">
+        <div class="preview preview-brief">
+          <div class="pv-hdr"><b>BRIEF · client</b><span>6 flags</span></div>
+          <div class="item"><span class="m">✓</span><span class="t">Scope defined</span><span class="v">clear</span></div>
+          <div class="item"><span class="m">✓</span><span class="t">Budget set</span><span class="v">฿2.4M</span></div>
+          <div class="item flag"><span class="m x">!</span><span class="t">Timeline missing</span><span class="v">flag</span></div>
+          <div class="item flag"><span class="m x">!</span><span class="t">Deliverable unclear</span><span class="v">flag</span></div>
+          <div class="pv-foot"><span>parsed in 0.8s</span><b>4 / 12 ok</b></div>
+        </div>
+        <div class="body">
+          <div>
+            <div class="cat">Design</div>
+            <h4>Brief Check</h4>
+          </div>
+          <p class="desc">อ่าน brief → ระบุช่องโหว่ขอบเขต งบ เงื่อนไข timeline → checklist พร้อมก่อนรับงาน</p>
+          <div class="foot">
+            <span class="badge k">Free</span>
+            <span class="badge ai">AI</span>
+            <span class="badge">Private</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="app">
+        <div class="preview preview-spec">
+          <div class="pv-hdr"><b>SPEC v3</b><span>A-204</span></div>
+          <div class="sec">พื้น Vinyl Plank</div>
+          <div class="li">ราคา <b>฿380/ม²</b> · X จำกัด</div>
+          <div class="sec">ผนัง Acoustic Panel</div>
+          <div class="li">ราคา <b>฿520/ม²</b> · Y Store</div>
+          <div class="sec">ฝ้า T-bar 60×60</div>
+        </div>
+        <div class="body">
+          <div>
+            <div class="cat">Design</div>
+            <h4>Spec Writer</h4>
+          </div>
+          <p class="desc">เลือกวัสดุ/อุปกรณ์ → spec อัตโนมัติจาก template ทีม + ราคา + ผู้ขายที่เคยใช้</p>
+          <div class="foot">
+            <span class="badge">Member</span>
+            <span class="badge ai">AI</span>
+            <span class="badge">Saves data</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="app">
+        <div class="preview preview-post">
+          <div class="pv-side">
+            <div class="img">IMG</div>
+          </div>
+          <div class="pv-main">
+            <div class="pv-hdr"><b>FB · draft</b><span>v2</span></div>
+            <div class="text">
+              <div class="ln"></div>
+              <div class="ln short"></div>
+              <div class="ln shorter"></div>
+            </div>
+            <div class="tags"><b>#buildbybim</b> #bim #project</div>
+          </div>
+        </div>
+        <div class="body">
+          <div>
+            <div class="cat">AI Workflow</div>
+            <h4>Post Generator</h4>
+          </div>
+          <p class="desc">งานในมือ 1 ชิ้น → caption + hook + hashtag + แนะนำมุมภาพ พร้อมตรวจ tone ของแบรนด์</p>
+          <div class="foot">
+            <span class="badge k">Free</span>
+            <span class="badge ai">AI</span>
+            <span class="badge">Public</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="app">
+        <div class="preview preview-site">
+          <div class="pv-hdr"><b>SITE · 24/05</b><span>foreman</span></div>
+          <div class="row done"><span class="m">✓</span><span class="t">Foundation pour</span><span class="ts">09:12</span></div>
+          <div class="row done"><span class="m">✓</span><span class="t">Column setup</span><span class="ts">10:30</span></div>
+          <div class="row"><span class="m">□</span><span class="t">MEP rough-in</span><span class="ts">—</span></div>
+          <div class="photos"><span class="ph"></span><span class="ph"></span><span class="ph"></span><span class="ph"></span></div>
+        </div>
+        <div class="body">
+          <div>
+            <div class="cat">Construction</div>
+            <h4>Site Checklist</h4>
+          </div>
+          <p class="desc">ตรวจหน้างาน → ติ๊ก checklist + ถ่ายรูป → log พร้อม timestamp ตำแหน่ง defect tag</p>
+          <div class="foot">
+            <span class="badge">Starter</span>
+            <span class="badge">Saves data</span>
+            <span class="badge">Mobile</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="app">
+        <div class="preview preview-prompt">
+          <div class="pv-hdr"><b>PROMPT SETS</b><span>240 in lib</span></div>
+          <div class="stack">
+            <div class="pc p1"><b>Brief writer</b>v2 · 38 uses</div>
+            <div class="pc p2"><b>Spec extractor</b>v4 · 124 uses</div>
+            <div class="pc p3"><b>Plan reviewer</b>"You are a senior architect…"</div>
+          </div>
+        </div>
+        <div class="body">
+          <div>
+            <div class="cat">AI Workflow</div>
+            <h4>Prompt Set Library</h4>
+          </div>
+          <p class="desc">เลือก prompt set ตามสายงาน → ใช้ซ้ำ บันทึก favorite จัด version และแชร์ใน workspace ของทีม</p>
+          <div class="foot">
+            <span class="badge">Member</span>
+            <span class="badge ai">AI</span>
+            <span class="badge">Saves data</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="app">
+        <div class="preview preview-agent">
+          <div class="pv-hdr"><b>AGENT · beta</b><span>● live</span></div>
+          <div class="flow">
+            <div class="node"><b>LINE</b>intake</div>
+            <span class="arr">→</span>
+            <div class="node k"><b>AI</b>parse</div>
+            <span class="arr">→</span>
+            <div class="node"><b>DRAFT</b>confirm</div>
+          </div>
+          <div class="pv-foot"><span>3 messages · 1.2s</span><b>awaiting</b></div>
+        </div>
+        <div class="body">
+          <div>
+            <div class="cat">AI Workflow</div>
+            <h4>Auto-Agent (beta)</h4>
+          </div>
+          <p class="desc">LINE/Email → agent ทำ draft ทุกขั้นอัตโนมัติ → human confirm ก่อน commit เข้า workspace</p>
+          <div class="foot">
+            <span class="badge o">Future</span>
+            <span class="badge ai">AI</span>
+            <span class="badge">Human-confirm</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div style="margin-top:32px;text-align:center">
+      <a href="#" class="btn btn-line en">ดูทั้งหมด 42 แอป →</a>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="s alt" id="workflows" data-screen-label="Workflow">
+  <div class="wrap">
+    <div class="s-head">
+      <div>
+        <div class="s-kicker">05 / Workflow Model</div>
+        <h2>สาม mode ทำงานต่อเนื่อง — ลองครั้งเดียว,<br>บันทึก, หรือให้ agent ทำเอง</h2>
+      </div>
+      <p>ทุก tool สามารถยกระดับขึ้นเป็น workflow ที่บันทึก step, prompt และ output เพื่อให้ agent ทำซ้ำได้</p>
+    </div>
+
+    <div class="wf-grid">
+      <div class="wf">
+        <div class="step"><span>STEP <b>01</b> · QUICK</span><span class="arr">→</span></div>
+        <h3>Quick mode</h3>
+        <p>ลองใช้ครั้งเดียว ไม่ต้อง login รับ output แล้วจบ — เหมาะกับงานเฉพาะหน้า ตรวจไฟล์, generate draft</p>
+        <div class="wf-demo">
+          <div class="l"><span class="t">10:02</span><span class="s">$</span><span class="m"><b>upload</b> plan_A204.pdf</span></div>
+          <div class="l"><span class="t">10:02</span><span class="s">→</span><span class="m">parsing 24 sheets…</span></div>
+          <div class="l"><span class="t">10:02</span><span class="s ok">✓</span><span class="m"><b>done</b> · 1.2s · 6 issues</span></div>
+        </div>
+      </div>
+      <div class="wf">
+        <div class="step"><span>STEP <b>02</b> · SAVED</span><span class="arr">→</span></div>
+        <h3>Saved mode</h3>
+        <p>บันทึก input/prompt/output ไว้ใน workspace — ใช้ซ้ำกับโปรเจกต์ใหม่ได้, แชร์กับทีม, ติด version</p>
+        <div class="wf-demo">
+          <div class="l"><span class="t">10:04</span><span class="s">$</span><span class="m"><b>save</b> → workspace/A204</span></div>
+          <div class="l"><span class="t">10:04</span><span class="s">→</span><span class="m">linked prompt v3 · 12 tags</span></div>
+          <div class="l"><span class="t">10:04</span><span class="s ok">✓</span><span class="m"><b>shared</b> · 4 members</span></div>
+        </div>
+      </div>
+      <div class="wf">
+        <div class="step"><span>STEP <b>03</b> · AGENT</span><span class="arr">●</span></div>
+        <h3>Agent ready</h3>
+        <p>ปล่อยให้ AI agent ทำงานเอง — รับไฟล์/รูป/สลิป/ข้อความผ่าน LINE หรือ email และจัดเป็น draft รอตรวจ</p>
+        <div class="wf-demo">
+          <div class="l"><span class="t">10:08</span><span class="s">$</span><span class="m"><b>agent</b> watch line://intake</span></div>
+          <div class="l"><span class="t">10:09</span><span class="s">→</span><span class="m">3 receipts queued</span></div>
+          <div class="l"><span class="t">10:09</span><span class="s ok">✓</span><span class="m"><b>drafted</b> · awaiting<span class="blink"></span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="s" data-screen-label="Trust">
+  <div class="wrap">
+    <div class="s-head">
+      <div>
+        <div class="s-kicker">06 / Trust &amp; Security</div>
+        <h2>เครื่องมือทำงานต้องน่าเชื่อถือก่อน<br>ใช้งานสะดวกทีหลัง</h2>
+      </div>
+      <p>ทุกการตัดสินใจที่สำคัญ ต้องมาจากคุณ ไม่ใช่ AI — ระบบสร้าง draft, มนุษย์ confirm ก่อนทุกครั้ง</p>
+    </div>
+
+    <div class="trust">
+      <div class="trust-list">
+        <div class="trust-item"><span class="n">01 · SOURCE FIRST</span><div><h4>ทุก output อ้างอิงแหล่งข้อมูลของผู้ใช้</h4><p>AI ไม่เดาเอง ทุกบรรทัดของ draft ระบุได้ว่ามาจากไฟล์ไหน บรรทัดไหน เพื่อให้ตรวจสอบย้อนกลับได้</p></div></div>
+        <div class="trust-item"><span class="n">02 · DRAFT FIRST</span><div><h4>ไม่มีการเขียนทับข้อมูลโดยอัตโนมัติ</h4><p>ทุกการเปลี่ยนแปลงเป็น draft รอผู้ใช้ approve เก็บประวัติทุก version สำหรับการตรวจสอบ</p></div></div>
+        <div class="trust-item"><span class="n">03 · ACCESS CHECKED</span><div><h4>Permission ระดับ user / plan / app / feature</h4><p>Admin ตั้งค่าสิทธิ์อย่างละเอียดได้ ระบุชัดว่าใครเห็นข้อมูลไหน และข้อมูลใดสามารถส่งออกจาก workspace</p></div></div>
+        <div class="trust-item"><span class="n">04 · EXPORT READY</span><div><h4>ข้อมูลของคุณ — ไม่ใช่ของระบบ</h4><p>Export ได้ทั้ง project, workspace, prompt และ workflow ในฟอร์แมตที่ใช้ต่อได้จริง (JSON, CSV, PDF, XLSX)</p></div></div>
+      </div>
+
+      <aside class="trust-panel">
+        <div class="trust-panel-inner">
+          <h3>Privacy by Design</h3>
+          <p>ทุก app ระบุ privacy level ชัดเจน ผู้ใช้ตัดสินใจได้ก่อนเริ่มงาน</p>
+          <div class="row"><span class="l">PRIVATE</span><span class="v">เก็บใน workspace ของคุณเท่านั้น</span><span class="ok">on</span></div>
+          <div class="row"><span class="l">TEAM</span><span class="v">แชร์ในทีมตาม permission</span><span class="ok">on</span></div>
+          <div class="row"><span class="l">PUBLIC</span><span class="v">เผยแพร่ได้ มี watermark</span><span class="ok">opt-in</span></div>
+          <div class="row"><span class="l">AI USAGE</span><span class="v">ระบุชัดว่าใช้ model ใด version ไหน</span><span class="ok">on</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="s alt" id="pricing" data-screen-label="Pricing">
+  <div class="wrap">
+    <div class="s-head">
+      <div>
+        <div class="s-kicker">07 / Pricing</div>
+        <h2>เริ่มฟรี จ่ายเฉพาะส่วนที่ต้องการ<br>admin ปรับเงื่อนไขได้</h2>
+      </div>
+      <p>ไม่มี seat-based ราคา รายเดือนยืดหยุ่น admin override ได้ตาม support level ของแต่ละทีม</p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="price">
+        <div class="tier">Free</div>
+        <div class="desc">เริ่มต้นใช้ tool เล็ก ๆ ฟรี ไม่ต้องใส่บัตร</div>
+        <div class="val"><sup>฿</sup>0<small>/ ตลอดไป</small></div>
+        <div class="price-cta"><a href="#" class="btn btn-line">เริ่มใช้งานฟรี</a></div>
+        <ul class="feats">
+          <li class="feat">Quick tools ทั้งหมดของ Free tier</li>
+          <li class="feat">5 prompt sets ต่อเดือน</li>
+          <li class="feat">ส่งออก PDF/CSV</li>
+          <li class="feat">Community support</li>
+        </ul>
+      </div>
+      <div class="price feat">
+        <div class="rib">แนะนำ</div>
+        <div class="tier">Support Monthly</div>
+        <div class="desc">สำหรับคนทำงานจริง รายเดือนยกเลิกเมื่อไหร่ก็ได้</div>
+        <div class="val"><sup>฿</sup>290<small>/ เดือน</small></div>
+        <div class="price-cta"><a href="#" class="btn btn-solid">สมัคร Support Plan</a></div>
+        <ul class="feats">
+          <li class="feat">ครบทุก app ทุก tool ทุก prompt</li>
+          <li class="feat">Workspace ไม่จำกัด + version history</li>
+          <li class="feat">LINE Agent + Email Intake</li>
+          <li class="feat">Priority support 24h</li>
+          <li class="feat">Export ทุกฟอร์แมต</li>
+        </ul>
+      </div>
+      <div class="price">
+        <div class="tier">Custom / Admin</div>
+        <div class="desc">สำหรับทีมหรือองค์กรที่ต้องการกำหนดสิทธิ์เอง</div>
+        <div class="val"><small>คุยรายโปรเจกต์</small></div>
+        <div class="price-cta"><a href="#" class="btn btn-line">ติดต่อทีม Admin</a></div>
+        <ul class="feats">
+          <li class="feat">Admin Console + Permission rules</li>
+          <li class="feat">Support level ที่กำหนดเอง</li>
+          <li class="feat">SSO + Private deployment</li>
+          <li class="feat">SLA + onboarding ทีม</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="s" data-screen-label="FAQ">
+  <div class="wrap">
+    <div class="faq-grid">
+      <div class="faq-side">
+        <div class="s-kicker">08 / FAQ</div>
+        <h2>คำถามที่พบบ่อย</h2>
+        <p>ถ้ายังไม่เจอคำตอบ ส่งคำถามมาได้ที่<br><a href="#">hello@buildbybim.space</a></p>
+      </div>
+      <div class="faq-list">
+        <details class="faq" open>
+          <summary>ต้องเข้าใจ BIM ก่อนใช้งานไหม?</summary>
+          <div class="ans">ไม่จำเป็น — แม้ชื่อจะมาจากสาย BIM แต่ tool ส่วนใหญ่ออกแบบให้ใช้ได้ตั้งแต่งานก่อสร้างเล็ก ออกแบบภายใน เอกสาร, content จนถึง workflow ทั่วไป ผู้ใช้แค่เลือกงานที่ต้องทำ ระบบจะแนะนำ tool ที่เหมาะสมให้</div>
+        </details>
+        <details class="faq">
+          <summary>ลองใช้ฟรีก่อนได้ไหม?</summary>
+          <div class="ans">ได้ — Quick tools ทั้งหมดของ Free tier ใช้ได้ทันทีโดยไม่ต้องสมัคร ไม่ต้องใส่บัตร เหมาะสำหรับการลอง output ก่อนตัดสินใจสมัคร Support plan</div>
+        </details>
+        <details class="faq">
+          <summary>AI จะบันทึกข้อมูลให้อัตโนมัติเลยไหม?</summary>
+          <div class="ans">ไม่ — AI สร้าง draft data เท่านั้น ผู้ใช้ต้อง confirm ก่อน commit ทุกครั้ง โดยเฉพาะข้อมูลสำคัญเช่น BOQ, สลิป, spec หรือเอกสารทางการ การออกแบบนี้เป็นหลักการหลักของแพลตฟอร์ม</div>
+        </details>
+        <details class="faq">
+          <summary>ในอนาคตจะรองรับสายงานอื่นไหม?</summary>
+          <div class="ans">รองรับ — เริ่มจากก่อสร้าง ออกแบบ และ BIM ก่อน แต่ระบบ App Catalog และ Permission ออกแบบให้ขยายไปสายงานอื่นได้ เช่น เอกสารทั่วไป, content workflow, business tools และ daily-life tools ในเฟสถัดไป</div>
+        </details>
+        <details class="faq">
+          <summary>ข้อมูลผู้ใช้ได้รับการคุ้มครองอย่างไร?</summary>
+          <div class="ans">ทุก app ระบุ privacy level ชัดเจน (Private/Team/Public), ข้อมูลของผู้ใช้ไม่ถูกใช้ train model ใด ๆ และทุก output อ้างอิงแหล่งข้อมูลของผู้ใช้เอง สามารถ export ออกได้ทั้งหมดเมื่อเลิกใช้</div>
+        </details>
+        <details class="faq">
+          <summary>Support Monthly รวมอะไรบ้าง?</summary>
+          <div class="ans">รวมทุก app ทุก tool, workspace ไม่จำกัด, version history, LINE Agent + Email intake, AI quota ตาม plan, export ทุกฟอร์แมต และ priority support ภายใน 24 ชั่วโมง — admin สามารถปรับเงื่อนไขให้ทีมได้</div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEVELOPER -->
+<section class="s dark" id="developer" data-screen-label="Developer">
+  <div class="wrap">
+    <div class="dev-grid">
+      <div>
+        <div class="s-kicker">09 / Developer Trust</div>
+        <h2 style="font-family:var(--th);font-size:clamp(28px,3.2vw,40px);font-weight:600;line-height:1.1;letter-spacing:-.012em;margin:0 0 16px;color:#fff;text-wrap:balance">สร้างโดยสถาปนิกที่ใช้เครื่องมือนี้ทำงานจริงทุกวัน</h2>
+        <p style="font-size:15px;color:#9F9F9C;margin:0 0 26px;line-height:1.6;max-width:480px">Buildbybim.space พัฒนาโดยสถาปนิกที่ทำเครื่องมือสำหรับก่อสร้าง ออกแบบ และ AI workflow — ทุก tool เกิดจากปัญหาจริงในงาน ไม่ใช่จากการเดาความต้องการ</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="#" class="btn btn-solid" style="background:#fff;color:var(--ink)">อ่าน Changelog</a>
+          <a href="#" class="btn btn-line en" style="border-color:rgba(255,255,255,.3);color:#fff">Docs &amp; API</a>
+        </div>
+      </div>
+
+      <div class="dev-card">
+        <div class="dev-head">
+          <div class="dev-avatar">B</div>
+          <div><div class="name">Bim · Architect &amp; Developer</div><div class="role">Build · Operate · Iterate</div></div>
+          <div class="v">verified</div>
+        </div>
+        <div class="dev-body">
+          <div class="dev-stat"><div class="l">Last shipped</div><div class="v">2d ago</div></div>
+          <div class="dev-stat"><div class="l">Active apps</div><div class="v">42</div></div>
+        </div>
+        <div class="dev-foot">
+          <div class="l"><span>v0.4.2 · plan-review</span><span>shipped</span></div>
+          <div class="l"><span>v0.4.1 · boq-builder</span><span>shipped</span></div>
+          <div class="l"><span>v0.4.0 · line-agent</span><span>beta</span></div>
+          <div class="l"><span>uptime · 30 days</span><span>99.96%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><span class="mk" style="width:24px;height:24px;border-radius:4px;background:#fff;display:inline-block;position:relative"></span><span>Build<span style="font-weight:500">By</span>BIM<span style="font-family:var(--mono);font-size:11px;font-weight:400;color:#9F9F9C;margin-left:6px;letter-spacing:.04em">.space</span></span></div>
+        <p style="max-width:300px;color:#9F9F9C;font-size:13px;line-height:1.6;margin:0">รวมเครื่องมือทำงานสำหรับก่อสร้าง ออกแบบ และ AI Workflow — เริ่มจาก tool เล็ก ต่อยอดเป็น workspace</p>
+      </div>
+      <div class="foot-col"><h6>Product</h6><a href="#apps">Apps</a><a href="#tools">Tools</a><a href="#prompts">Prompts</a><a href="#workflows">Workflows</a></div>
+      <div class="foot-col"><h6>Plans</h6><a href="#pricing">Free</a><a href="#pricing">Support</a><a href="#pricing">Custom</a><a href="#">Admin</a></div>
+      <div class="foot-col"><h6>Developer</h6><a href="#developer">About</a><a href="#">Docs</a><a href="#">Changelog</a><a href="#">Status</a></div>
+      <div class="foot-col"><h6>Contact</h6><a href="#">hello@buildbybim.space</a><a href="#">LINE @buildbybim</a><a href="#">Facebook</a><a href="#">GitHub</a></div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 2026 Buildbybim.space · Bangkok, Thailand · v0.4.2</div>
+      <div class="ok">All systems operational · 99.96% uptime</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Filter chip toggle (visual)
+document.querySelectorAll('.chip').forEach(c=>{
+  c.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));c.classList.add('active')};
+});
+// Mock sidebar interaction
+document.querySelectorAll('.mock-side .it').forEach(it=>{
+  it.onclick=()=>{document.querySelectorAll('.mock-side .it').forEach(x=>x.classList.remove('on'));it.classList.add('on')};
+});
+// Mock view tabs
+document.querySelectorAll('.mock-main-head .acts span').forEach(s=>{
+  s.onclick=()=>{document.querySelectorAll('.mock-main-head .acts span').forEach(x=>x.classList.remove('on'));s.classList.add('on')};
+});
+</script>
+</body>
+</html>

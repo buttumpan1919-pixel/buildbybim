@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="40" x2="560" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF7ED"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="640" rx="54" fill="url(#bg)"/>
+  <rect x="130" y="150" width="380" height="330" rx="30" fill="#FFFFFF" stroke="#0F172A" stroke-opacity=".12" stroke-width="8"/>
+  <rect x="168" y="190" width="134" height="104" rx="20" fill="#FEF3C7"/>
+  <rect x="338" y="190" width="134" height="104" rx="20" fill="#ECFEFF"/>
+  <rect x="168" y="330" width="304" height="22" rx="11" fill="#0F172A" fill-opacity=".12"/>
+  <rect x="168" y="382" width="214" height="22" rx="11" fill="#0F172A" fill-opacity=".1"/>
+  <circle cx="452" cy="406" r="42" fill="#F97316" fill-opacity=".88"/>
+  <path d="M452 382v30M452 432h.01" stroke="#431407" stroke-width="10" stroke-linecap="round"/>
+  <text x="84" y="92" fill="#0F172A" fill-opacity=".72" font-family="Arial, sans-serif" font-size="30" font-weight="700">DEFECT NOTE</text>
+</svg>

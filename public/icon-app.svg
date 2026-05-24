@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Buildbybim.space">
+  <!-- Background fills entire canvas (safe for both 'any' and 'maskable' purposes — Android cuts 10% per side, the B-mark sits within the inner ~410px safe zone) -->
+  <rect width="512" height="512" fill="#0A0A09"/>
+
+  <!-- Subtle grid lines (decorative, well within safe zone) -->
+  <g stroke="#FAFAF9" stroke-width="1" opacity="0.08">
+    <line x1="256" y1="64" x2="256" y2="448"/>
+    <line x1="64" y1="256" x2="448" y2="256"/>
+  </g>
+
+  <!-- B mark — centered, ~62% of canvas to stay inside maskable safe zone -->
+  <g transform="translate(176 144)" fill="#FAFAF9">
+    <path d="M40 0h70c30 0 54 19 54 51 0 17-8 31-21 39 18 8 30 25 30 46 0 33-25 56-62 56H40V0zm26 25v62h44c19 0 31-12 31-31s-12-31-31-31H66zm0 86v58h48c20 0 33-11 33-29s-13-29-33-29H66z"/>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="40" x2="560" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ECFEFF"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="640" rx="54" fill="url(#bg)"/>
+  <rect x="144" y="144" width="136" height="136" rx="28" fill="#FFFFFF" stroke="#0F172A" stroke-opacity=".12" stroke-width="8"/>
+  <rect x="360" y="144" width="136" height="136" rx="28" fill="#FFFFFF" stroke="#0F172A" stroke-opacity=".12" stroke-width="8"/>
+  <rect x="144" y="360" width="136" height="136" rx="28" fill="#FFFFFF" stroke="#0F172A" stroke-opacity=".12" stroke-width="8"/>
+  <rect x="360" y="360" width="136" height="136" rx="28" fill="#FFFFFF" stroke="#0F172A" stroke-opacity=".12" stroke-width="8"/>
+  <path d="M280 212h80M212 280v80M428 280v80M280 428h80" stroke="#0F766E" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="320" cy="320" r="42" fill="#22D3EE"/>
+  <text x="84" y="92" fill="#0F172A" fill-opacity=".72" font-family="Arial, sans-serif" font-size="30" font-weight="700">APP HUB</text>
+</svg>

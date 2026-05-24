@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <defs>
+    <linearGradient id="bg" x1="88" y1="56" x2="552" y2="588" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EEF2FF"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="640" rx="54" fill="url(#bg)"/>
+  <circle cx="320" cy="300" r="92" fill="#FFFFFF" stroke="#6366F1" stroke-opacity=".5" stroke-width="10"/>
+  <circle cx="320" cy="300" r="36" fill="#6366F1" fill-opacity=".92"/>
+  <path d="M320 164v44M320 392v44M184 300h44M412 300h44M224 204l32 32M416 204l-32 32M224 396l32-32M416 396l-32-32" stroke="#0F172A" stroke-opacity=".42" stroke-width="10" stroke-linecap="round"/>
+  <rect x="124" y="440" width="392" height="74" rx="22" fill="#FFFFFF" stroke="#0F172A" stroke-opacity=".12" stroke-width="8"/>
+  <path d="M168 477h156M354 477h118" stroke="#0F766E" stroke-width="10" stroke-linecap="round"/>
+  <text x="84" y="92" fill="#0F172A" fill-opacity=".72" font-family="Arial, sans-serif" font-size="30" font-weight="700">AI WORKFLOW</text>
+</svg>
